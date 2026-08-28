@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: voiceguard-backend
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=sqlite:///./voiceguard.db
+      - ENVIRONMENT=production
+    volumes:
+      - ./backend/samples:/app/samples
+      - voiceguard-db:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: voiceguard-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8001
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  voiceguard-db:
