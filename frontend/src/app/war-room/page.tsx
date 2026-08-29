@@ -66,97 +66,80 @@ export default function TelephonyWarRoomPage() {
       formData.append("line_id", selectedLineId);
       formData.append("caller_name", cName);
       formData.append("caller_number", cNum);
-      if (sId) {
-        formData.append("sample_id", sId);
-      }
-
-      const res = await simulatePBXCall(formData);
-      setCallResult(res);
-      // Refresh line states
-      fetchLines();
+      formData.append("sample_id", sId);
+      const result = await simulatePBXCall(formData);
+      setCallResult(result);
     } catch (err: any) {
-      alert("PBX Call simulation failed: " + err.message);
+      alert("PBX Call simulation failed: " + (err.message || "Unknown error"));
     } finally {
       setSimulating(false);
     }
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn max-w-6xl mx-auto pb-16">
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+    <div className="space-y-8 animate-fadeIn max-w-7xl mx-auto pb-16">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCF0] pb-6">
         <div>
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-300 mb-2">
-            <PhoneForwarded className="w-3.5 h-3.5 text-cyan-400" />
-            <span>ENTERPRISE TELEPHONY GATEWAY & AUTONOMOUS PBX INTERCEPTOR</span>
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B8A6E8]/30 border border-[#B8A6E8] text-xs font-mono text-[#3A3450] font-semibold mb-2">
+            <PhoneForwarded className="w-3.5 h-3.5 text-[#3A3450]" />
+            <span>ENTERPRISE SIP TRUNK & PBX GATEWAY WAR ROOM</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Telephony Gateway War Room
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3A3450] tracking-tight">
+            Telephony Gateway & In-Line SIP War Room
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Real-time SIP trunk switchboard monitoring, in-line acoustic deepfake interception, and autonomous call routing (Operator Transfer, Vocal OTP IVR, or Immediate Disconnect).
+          <p className="text-sm text-[#7A7390] mt-1">
+            Autonomous SIP proxy with real-time in-call deepfake detection and automatic call blacklisting.
           </p>
         </div>
 
-        <button
-          onClick={fetchLines}
-          className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 border border-slate-700 flex items-center space-x-1.5 self-start md:self-auto"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Refresh Trunks</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={fetchLines}
+            className="p-2 rounded-xl bg-[#F3EEFB] hover:bg-[#EAF6F2] text-[#7A7390] hover:text-[#3A3450] border border-[#E3DCF0] transition-colors"
+            title="Refresh Trunk Lines"
+          >
+            <RotateCcw className={`w-4 h-4 ${loadingLines ? "animate-spin text-[#8E79C9]" : ""}`} />
+          </button>
+        </div>
       </div>
 
-      {/* Switchboard Trunks Grid */}
+      {/* PBX Gateway Trunk Lines Grid */}
       <div className="space-y-3">
-        <h2 className="text-xs font-bold text-white uppercase font-mono tracking-wider flex items-center space-x-2">
-          <Server className="w-4 h-4 text-cyan-400" />
-          <span>Active Enterprise PBX Trunks & Extensions</span>
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-[#3A3450] flex items-center space-x-2">
+            <Server className="w-4 h-4 text-[#8E79C9]" />
+            <span>Monitored PBX Trunk Lines</span>
+          </h2>
+          <span className="text-xs font-mono text-[#7A7390]">
+            Autonomous SIP In-Line Filtering: Active
+          </span>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {lines.map((line) => {
             const isSelected = selectedLineId === line.line_id;
             return (
               <div
                 key={line.line_id}
                 onClick={() => setSelectedLineId(line.line_id)}
-                className={`p-5 rounded-2xl border cursor-pointer transition-all ${
+                className={`p-5 rounded-3xl border transition-all cursor-pointer shadow-sm ${
                   isSelected
-                    ? "glass-panel border-cyan-500/70 shadow-lg shadow-cyan-500/15"
-                    : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
+                    ? "bg-[#F3EEFB] border-[#B8A6E8] shadow-md"
+                    : "bg-[#FBF7F4] border-[#E3DCF0] hover:border-[#B8A6E8]"
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                    EXT {line.extension}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold text-[#3A3450]">
+                    Ext {line.extension}
                   </span>
-                  <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-                      line.last_decision === "TERMINATE_AND_BLACKLIST"
-                        ? "bg-rose-500/20 text-rose-400"
-                        : line.last_decision === "DIVERT_TO_OTP_IVR"
-                        ? "bg-amber-500/20 text-amber-400"
-                        : "bg-emerald-500/20 text-emerald-400"
-                    }`}
-                  >
-                    {line.last_decision}
-                  </span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#2E9E5B] animate-pulse" />
                 </div>
-
-                <h3 className="text-sm font-bold text-white">{line.name}</h3>
-                <p className="text-xs text-slate-400 mt-1 font-mono">
-                  Last Caller: <span className="text-slate-200">{line.last_caller}</span>
-                </p>
-
-                <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-500">
-                  <span className="flex items-center space-x-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>SIP Trunk Online</span>
-                  </span>
-                  <span className="text-cyan-400 font-bold">
-                    {isSelected ? "Active Target" : "Select Line"}
-                  </span>
+                <h3 className="font-bold text-sm text-[#3A3450] mt-1">{line.name}</h3>
+                <p className="text-xs text-[#7A7390] mt-0.5">{line.status || "Live Protected Line"}</p>
+                <div className="mt-3 pt-2 border-t border-[#E3DCF0] flex items-center justify-between text-[11px] font-mono text-[#7A7390]">
+                  <span>SIP Channel</span>
+                  <span className="text-[#2E9E5B] font-bold">100% Protected</span>
                 </div>
               </div>
             );
@@ -164,39 +147,41 @@ export default function TelephonyWarRoomPage() {
         </div>
       </div>
 
-      {/* Interactive In-Line PBX Simulator Section */}
+      {/* Interactive Telecom Simulation Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Preset Attack Scenarios */}
+        {/* Left 1 Col: Quick Attack Vector Dispatcher */}
         <div className="space-y-4">
-          <h2 className="text-xs font-bold text-white uppercase font-mono tracking-wider flex items-center space-x-2">
-            <Zap className="w-4 h-4 text-cyan-400" />
-            <span>1-Click Telecom Attack Vectors</span>
-          </h2>
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-[#3A3450] flex items-center space-x-2">
+              <Zap className="w-4 h-4 text-[#C98A1F]" />
+              <span>Simulated Inbound Calls</span>
+            </h3>
+          </div>
 
           <div className="space-y-3">
-            {/* Scenario 1: CEO Wire Fraud Clone */}
+            {/* Scenario 1: CEO Voice Clone Wire Fraud */}
             <div
               onClick={() => {
                 setCallerName("Chief Executive Officer");
                 setCallerNumber("+1 (555) 019-4820");
                 setSampleId("ceo_clone_wire_fraud");
-                handleSimulateCall("ceo_clone_wire_fraud", "CEO Clone (Wire Fraud)", "+1 (555) 019-4820");
+                handleSimulateCall("ceo_clone_wire_fraud", "Chief Executive Officer (AI Clone)", "+1 (555) 019-4820");
               }}
-              className="p-4 rounded-xl glass-panel-danger border border-rose-500/40 hover:border-rose-500/80 cursor-pointer transition-all space-y-2 group"
+              className="p-5 rounded-3xl bg-[#FCE4E4] border border-[#D6395B]/40 hover:border-[#D6395B] cursor-pointer transition-all space-y-2 group shadow-sm"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#FCE4E4] text-[#D6395B] border border-[#D6395B]">
                   CRITICAL THREAT
                 </span>
-                <PhoneCall className="w-4 h-4 text-rose-400 group-hover:scale-110 transition-transform" />
+                <PhoneCall className="w-4 h-4 text-[#D6395B] group-hover:scale-110 transition-transform" />
               </div>
-              <h4 className="text-xs font-bold text-white">CEO Wire Transfer Clone</h4>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                Neural clone impersonating the CEO demanding $450k offshore wire transfer on Ext 8010.
+              <h4 className="text-xs font-bold text-[#D6395B]">CEO Wire Transfer Urgent Authorization</h4>
+              <p className="text-[11px] text-[#3A3450] leading-relaxed font-medium">
+                High-stakes synthetic voice clone mimicking CEO authorizing $450k wire transfer to offshore account.
               </p>
             </div>
 
-            {/* Scenario 2: Helpdesk Admin Reset Probe */}
+            {/* Scenario 2: Helpdesk MFA Credential Probe */}
             <div
               onClick={() => {
                 setCallerName("Helpdesk IT Admin");
@@ -204,16 +189,16 @@ export default function TelephonyWarRoomPage() {
                 setSampleId("deepfake_helpdesk_reset");
                 handleSimulateCall("deepfake_helpdesk_reset", "Helpdesk MFA Reset Probe", "+1 (555) 014-9921");
               }}
-              className="p-4 rounded-xl glass-panel border border-amber-500/40 hover:border-amber-500/80 cursor-pointer transition-all space-y-2 group"
+              className="p-5 rounded-3xl bg-[#FDF3DA] border border-[#C98A1F]/40 hover:border-[#C98A1F] cursor-pointer transition-all space-y-2 group shadow-sm"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#FDF3DA] text-[#C98A1F] border border-[#C98A1F]">
                   CREDENTIAL PROBE
                 </span>
-                <PhoneCall className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                <PhoneCall className="w-4 h-4 text-[#C98A1F] group-hover:scale-110 transition-transform" />
               </div>
-              <h4 className="text-xs font-bold text-white">IT Service Desk Password Reset</h4>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
+              <h4 className="text-xs font-bold text-[#C98A1F]">IT Service Desk Password Reset</h4>
+              <p className="text-[11px] text-[#3A3450] leading-relaxed font-medium">
                 Synthetic voice probe impersonating internal employee to bypass Okta MFA on Ext 4040.
               </p>
             </div>
@@ -226,16 +211,16 @@ export default function TelephonyWarRoomPage() {
                 setSampleId("human_executive_auth");
                 handleSimulateCall("human_executive_auth", "Rajesh Verma (Genuine CEO)", "+1 (555) 018-7733");
               }}
-              className="p-4 rounded-xl glass-panel-safe border border-emerald-500/40 hover:border-emerald-500/80 cursor-pointer transition-all space-y-2 group"
+              className="p-5 rounded-3xl bg-[#DFF5E6] border border-[#2E9E5B]/40 hover:border-[#2E9E5B] cursor-pointer transition-all space-y-2 group shadow-sm"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#DFF5E6] text-[#2E9E5B] border border-[#2E9E5B]">
                   GENUINE HUMAN
                 </span>
-                <PhoneCall className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+                <PhoneCall className="w-4 h-4 text-[#2E9E5B] group-hover:scale-110 transition-transform" />
               </div>
-              <h4 className="text-xs font-bold text-white">Authentic Executive Voice Auth</h4>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
+              <h4 className="text-xs font-bold text-[#2E9E5B]">Authentic Executive Voice Auth</h4>
+              <p className="text-[11px] text-[#3A3450] leading-relaxed font-medium">
                 Legitimate human executive verbal authorization with natural vocal tract prosody.
               </p>
             </div>
@@ -244,13 +229,13 @@ export default function TelephonyWarRoomPage() {
 
         {/* Right 2 Columns: Autonomous Routing Decision Display */}
         <div className="lg:col-span-2 space-y-5">
-          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-5">
+          <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-5 shadow-sm">
             <div>
-              <h2 className="text-base font-bold text-white flex items-center space-x-2">
-                <Radio className="w-4 h-4 text-cyan-400" />
+              <h2 className="text-base font-bold text-[#3A3450] flex items-center space-x-2">
+                <Radio className="w-4 h-4 text-[#8E79C9]" />
                 <span>In-Line PBX Autonomous Intercept Engine</span>
               </h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-[#7A7390] mt-1">
                 Every inbound call packet is analyzed in &lt;150ms before human bridge connects.
               </p>
             </div>
@@ -258,11 +243,11 @@ export default function TelephonyWarRoomPage() {
             {/* Inbound Call Configuration */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
               <div>
-                <label className="text-slate-400 block mb-1">Target PBX Line:</label>
+                <label className="text-[#7A7390] block mb-1 font-semibold">Target PBX Line:</label>
                 <select
                   value={selectedLineId}
                   onChange={(e) => setSelectedLineId(e.target.value)}
-                  className="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-cyan-500"
+                  className="w-full p-2.5 rounded-xl bg-[#FBF7F4] border border-[#E3DCF0] text-[#3A3450] focus:outline-none focus:border-[#B8A6E8]"
                 >
                   {lines.map((l) => (
                     <option key={l.line_id} value={l.line_id}>
@@ -273,12 +258,12 @@ export default function TelephonyWarRoomPage() {
               </div>
 
               <div>
-                <label className="text-slate-400 block mb-1">Inbound Caller Number:</label>
+                <label className="text-[#7A7390] block mb-1 font-semibold">Inbound Caller Number:</label>
                 <input
                   type="text"
                   value={callerNumber}
                   onChange={(e) => setCallerNumber(e.target.value)}
-                  className="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-cyan-500"
+                  className="w-full p-2.5 rounded-xl bg-[#FBF7F4] border border-[#E3DCF0] text-[#3A3450] focus:outline-none focus:border-[#B8A6E8]"
                 />
               </div>
             </div>
@@ -286,16 +271,16 @@ export default function TelephonyWarRoomPage() {
             <button
               onClick={() => handleSimulateCall()}
               disabled={simulating}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
             >
               {simulating ? (
                 <>
-                  <Activity className="w-4 h-4 animate-spin text-slate-950" />
+                  <Activity className="w-4 h-4 animate-spin text-[#3A3450]" />
                   <span>Processing SIP Packet Stream & Acoustic Forensics...</span>
                 </>
               ) : (
                 <>
-                  <PhoneCall className="w-4 h-4 text-slate-950" />
+                  <PhoneCall className="w-4 h-4 text-[#3A3450]" />
                   <span>Dispatch Inbound Telecom Call</span>
                 </>
               )}
@@ -306,22 +291,22 @@ export default function TelephonyWarRoomPage() {
           {callResult && (
             <div className="space-y-5 animate-fadeIn">
               <div
-                className={`rounded-2xl p-6 border transition-all ${
+                className={`rounded-3xl p-6 sm:p-7 border-2 transition-all shadow-md ${
                   callResult.routing_decision === "ROUTE_TO_AGENT"
-                    ? "glass-panel-safe border-emerald-500/50 cyber-glow-green"
+                    ? "bg-[#DFF5E6] border-[#2E9E5B]"
                     : callResult.routing_decision === "DIVERT_TO_OTP_IVR"
-                    ? "glass-panel border-amber-500/50"
-                    : "glass-panel-danger border-rose-500/50 cyber-glow-red pulse-alert"
+                    ? "bg-[#FDF3DA] border-[#C98A1F]"
+                    : "bg-[#FCE4E4] border-[#D6395B]"
                 }`}
               >
                 <div className="flex items-start space-x-4">
                   <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${
+                    className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
                       callResult.routing_decision === "ROUTE_TO_AGENT"
-                        ? "bg-emerald-500/20 text-emerald-400"
+                        ? "bg-[#2E9E5B] text-white"
                         : callResult.routing_decision === "DIVERT_TO_OTP_IVR"
-                        ? "bg-amber-500/20 text-amber-400"
-                        : "bg-rose-500/20 text-rose-400"
+                        ? "bg-[#C98A1F] text-white"
+                        : "bg-[#D6395B] text-white pulse-alert"
                     }`}
                   >
                     {callResult.routing_decision === "ROUTE_TO_AGENT" ? (
@@ -335,23 +320,31 @@ export default function TelephonyWarRoomPage() {
 
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-950 text-white border border-slate-800">
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white/80 text-[#3A3450] border border-[#E3DCF0]">
                         SIP {callResult.sip_response_code}
                       </span>
                       <span
-                        className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${
+                        className={`text-[10px] font-mono font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full text-white shadow-sm ${
                           callResult.routing_decision === "ROUTE_TO_AGENT"
-                            ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                            ? "bg-[#2E9E5B]"
                             : callResult.routing_decision === "DIVERT_TO_OTP_IVR"
-                            ? "bg-amber-500/20 text-amber-300 border-amber-500/30"
-                            : "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                            ? "bg-[#C98A1F]"
+                            : "bg-[#D6395B]"
                         }`}
                       >
                         {callResult.routing_decision}
                       </span>
                     </div>
 
-                    <h3 className="text-xl font-extrabold text-white mt-1">
+                    <h3
+                      className={`text-xl font-black mt-1 ${
+                        callResult.routing_decision === "ROUTE_TO_AGENT"
+                          ? "text-[#2E9E5B]"
+                          : callResult.routing_decision === "DIVERT_TO_OTP_IVR"
+                          ? "text-[#C98A1F]"
+                          : "text-[#D6395B]"
+                      }`}
+                    >
                       {callResult.routing_decision === "ROUTE_TO_AGENT"
                         ? `Call Approved: Connected to Ext ${callResult.extension}`
                         : callResult.routing_decision === "DIVERT_TO_OTP_IVR"
@@ -359,20 +352,20 @@ export default function TelephonyWarRoomPage() {
                         : `Call Terminated: Clone Intercepted & Blacklisted`}
                     </h3>
 
-                    <p className="text-xs text-slate-300 leading-relaxed max-w-2xl">
+                    <p className="text-xs text-[#3A3450] leading-relaxed max-w-2xl font-medium">
                       {callResult.routing_reason}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between text-[11px] font-mono text-slate-400 gap-2">
+                <div className="mt-4 pt-3 border-t border-[#E3DCF0] flex flex-wrap items-center justify-between text-[11px] font-mono text-[#7A7390] gap-2">
                   <span>Call Reference: {callResult.call_id}</span>
                   <span>Risk Score: {callResult.risk_score.toFixed(1)}%</span>
                   <span
                     className={
                       callResult.blacklist_status === "GLOBAL_ENTERPRISE_BLACKLIST"
-                        ? "text-rose-400 font-bold"
-                        : "text-emerald-400 font-bold"
+                        ? "text-[#D6395B] font-bold"
+                        : "text-[#2E9E5B] font-bold"
                     }
                   >
                     Blacklist: {callResult.blacklist_status}
@@ -381,23 +374,23 @@ export default function TelephonyWarRoomPage() {
               </div>
 
               {/* Action Links */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 glass-panel p-4 rounded-xl border border-slate-800 text-xs font-mono">
-                <span className="text-slate-400">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#EAF6F2] p-5 rounded-3xl border border-[#E3DCF0] text-xs font-mono shadow-sm">
+                <span className="text-[#3A3450] font-medium">
                   Incident logged in SQLite Threat Ledger with SHA-256 evidence.
                 </span>
 
                 <div className="flex items-center space-x-3">
                   <Link
                     href="/soc"
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 flex items-center space-x-1"
+                    className="px-3.5 py-1.5 rounded-xl bg-[#FBF7F4] hover:bg-[#F3EEFB] text-[#3A3450] border border-[#E3DCF0] font-bold flex items-center space-x-1 shadow-xs"
                   >
                     <span>View in SOC Center</span>
-                    <ArrowRight className="w-3 h-3" />
+                    <ArrowRight className="w-3 h-3 text-[#8E79C9]" />
                   </Link>
 
                   <Link
                     href="/benchmark"
-                    className="px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-500/40 flex items-center space-x-1"
+                    className="px-3.5 py-1.5 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold flex items-center space-x-1 shadow-xs"
                   >
                     <span>Stress Test in Benchmark Lab</span>
                     <ArrowRight className="w-3 h-3" />

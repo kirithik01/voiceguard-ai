@@ -153,38 +153,38 @@ export default function SpectrogramViewer({
   const cursorPercent = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
 
   return (
-    <div className="rounded-xl bg-[#070b14] border border-slate-800 p-4 space-y-3">
+    <div className="rounded-2xl bg-[#F3EEFB] border border-[#E3DCF0] p-4 space-y-3 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Eye className="w-4 h-4 text-cyan-400" />
-          <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+          <Eye className="w-4 h-4 text-[#8E79C9]" />
+          <h4 className="text-xs font-mono font-bold text-[#3A3450] uppercase tracking-wider">
             Forensic STFT Mel-Spectrogram Heatmap
           </h4>
         </div>
 
-        <div className="flex items-center space-x-3 text-[10px] font-mono text-slate-400">
+        <div className="flex items-center space-x-3 text-[10px] font-mono text-[#7A7390]">
           <span className="flex items-center space-x-1">
             <span className="w-2 h-2 rounded-full bg-[#06b6d4]"></span>
             <span>Vocal Formants</span>
           </span>
           <span className="flex items-center space-x-1">
-            <span className="w-2 h-2 rounded-full bg-[#f59e0b]"></span>
+            <span className="w-2 h-2 rounded-full bg-[#C98A1F]"></span>
             <span>Diffusion Floor</span>
           </span>
           <span className="flex items-center space-x-1">
-            <span className="w-2 h-2 rounded-full bg-[#f43f5e]"></span>
+            <span className="w-2 h-2 rounded-full bg-[#D6395B]"></span>
             <span>Vocoder Artifacts</span>
           </span>
         </div>
       </div>
 
       {/* Spectrogram Canvas Frame */}
-      <div className="relative w-full h-44 rounded-lg overflow-hidden border border-slate-800 bg-[#050810]">
+      <div className="relative w-full h-44 rounded-xl overflow-hidden border border-[#E3DCF0] bg-[#1E192E]">
         {computing && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm space-x-2">
-            <Activity className="w-4 h-4 animate-spin text-cyan-400" />
-            <span className="text-xs font-mono text-cyan-300">Computing FFT Spectrum...</span>
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#1E192E]/70 backdrop-blur-sm space-x-2">
+            <Activity className="w-4 h-4 animate-spin text-[#B8A6E8]" />
+            <span className="text-xs font-mono text-[#F3EEFB]">Computing FFT Spectrum...</span>
           </div>
         )}
 
@@ -198,13 +198,13 @@ export default function SpectrogramViewer({
         {/* Playback Cursor Line */}
         {cursorPercent > 0 && (
           <div
-            className="absolute top-0 bottom-0 w-0.5 bg-cyan-300 pointer-events-none transition-all duration-75 shadow-[0_0_8px_#06b6d4]"
+            className="absolute top-0 bottom-0 w-0.5 bg-[#B8A6E8] pointer-events-none transition-all duration-75 shadow-[0_0_8px_#B8A6E8]"
             style={{ left: `${cursorPercent}%` }}
           />
         )}
 
         {/* Frequency Scale Annotations on Y-axis */}
-        <div className="absolute left-1.5 top-1 bottom-1 flex flex-col justify-between text-[9px] font-mono text-slate-400 select-none pointer-events-none drop-shadow">
+        <div className="absolute left-1.5 top-1 bottom-1 flex flex-col justify-between text-[9px] font-mono text-white/80 select-none pointer-events-none drop-shadow">
           <span>8.0 kHz</span>
           <span>4.0 kHz</span>
           <span>1.5 kHz</span>
@@ -213,15 +213,15 @@ export default function SpectrogramViewer({
 
         {/* Vocoder Alert Callout */}
         {verdict === "synthetic" && (
-          <div className="absolute right-2 top-2 px-2 py-1 rounded bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[10px] font-mono flex items-center space-x-1">
-            <Zap className="w-3 h-3 text-rose-400" />
+          <div className="absolute right-2 top-2 px-2.5 py-1 rounded bg-[#FCE4E4] border border-[#D6395B] text-[#D6395B] text-[10px] font-mono font-bold flex items-center space-x-1 shadow-sm">
+            <Zap className="w-3 h-3 text-[#D6395B]" />
             <span>Neural Deconv Distortion Detected</span>
           </div>
         )}
       </div>
 
       {/* Time axis footer */}
-      <div className="flex justify-between text-[10px] font-mono text-slate-500 pt-0.5">
+      <div className="flex justify-between text-[10px] font-mono text-[#7A7390] pt-0.5">
         <span>0.00s</span>
         <span>Duration: {duration ? duration.toFixed(2) : "--"}s</span>
         <span>Frequency Range: 0 - 8,000 Hz</span>

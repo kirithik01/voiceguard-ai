@@ -58,7 +58,7 @@ export default function MultilingualPage() {
       setActiveAnalysis(res.result);
       setAudioUrl(`http://127.0.0.1:8001${res.audio_url}`);
     } catch (err: any) {
-      alert("Vernacular test failed: " + err.message);
+      alert("Failed to synthesize vernacular sample: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -75,46 +75,35 @@ export default function MultilingualPage() {
       setActiveAnalysis(res.result);
       setAudioUrl(`http://127.0.0.1:8001${res.audio_url}`);
     } catch (err: any) {
-      alert("Synthesis failed: " + err.message);
+      alert("Vernacular generation failed: " + err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn max-w-6xl mx-auto pb-20">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+    <div className="space-y-8 animate-fadeIn max-w-6xl mx-auto pb-16">
+      {/* Header Banner */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCF0] pb-6">
         <div>
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-300 mb-2">
-            <Languages className="w-3.5 h-3.5 text-cyan-400" />
-            <span>INDIAN REGIONAL VERNACULAR ACOUSTIC DEFENSE CORE</span>
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B8A6E8]/30 border border-[#B8A6E8] text-xs font-mono text-[#3A3450] font-semibold mb-2">
+            <Languages className="w-3.5 h-3.5 text-[#3A3450]" />
+            <span>REGIONAL INDIAN LANGUAGE & CODE-SWITCHING DEFENSE</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Multi-Lingual Vernacular Defense Lab
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3A3450] tracking-tight">
+            Multi-Lingual Vernacular Threat Defense Lab
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Empirically proving that VoiceGuard is <span className="text-cyan-300 font-bold">100% language-agnostic</span>: neural vocoder mathematics and biological pitch physics detect synthetic clones across Hindi, Tamil, Telugu, and Hinglish with zero vocabulary dependency.
+          <p className="text-sm text-[#7A7390] mt-1">
+            Validates detection robustness against regional Indian language synthetic clones (Hindi, Tamil, Telugu, Hinglish).
           </p>
         </div>
       </div>
 
-      {/* Physics Explainer Card */}
-      <div className="p-4 rounded-2xl glass-panel border border-cyan-500/30 bg-cyan-950/10 text-xs text-slate-300 leading-relaxed space-y-1">
-        <span className="font-mono font-bold text-cyan-300 uppercase tracking-wider flex items-center space-x-1.5">
-          <Zap className="w-3.5 h-3.5 text-cyan-400" />
-          <span>Why VoiceGuard Works Universally Across Indian Languages</span>
-        </span>
-        <p>
-          Unlike NLP models that require training per language dialect, VoiceGuard analyzes the raw acoustic waveform. Whether speech is in Hindi, Tamil, or Bengali, human phonation requires natural vocal fold vibration ($F_0$ pitch std dev &gt; 15 Hz). Synthetic neural vocoders inevitably produce flat monotone intonation and elevated STFT Wiener flatness, making clone detection invariant to regional accents.
-        </p>
-      </div>
-
-      {/* 1-Click Regional Attack Presets */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-        <h3 className="text-xs font-bold text-white uppercase font-mono tracking-wider flex items-center space-x-2">
-          <Radio className="w-4 h-4 text-rose-400" />
-          <span>Select Real-World Indian Regional Attack Vector</span>
+      {/* Preset Regional Scenarios Grid */}
+      <div className="space-y-3">
+        <h3 className="text-xs font-bold text-[#3A3450] uppercase font-mono tracking-wider flex items-center space-x-2">
+          <Zap className="w-4 h-4 text-[#C98A1F]" />
+          <span>Pre-Staged Regional Attack Vectors</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -123,20 +112,20 @@ export default function MultilingualPage() {
               key={s.id}
               onClick={() => handleTestPreset(s)}
               disabled={loading}
-              className={`p-4 rounded-xl border text-left transition-all space-y-2 ${
+              className={`p-5 rounded-3xl border text-left transition-all space-y-2 shadow-xs hover:-translate-y-0.5 ${
                 selectedSample?.id === s.id
-                  ? "glass-panel-danger border-rose-500/60 shadow-md shadow-rose-500/10"
-                  : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
+                  ? "bg-[#FCE4E4] border-2 border-[#D6395B]"
+                  : "bg-[#F3EEFB] border-[#E3DCF0] hover:border-[#B8A6E8]"
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                <span className="text-[10px] font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-[#FCE4E4] text-[#D6395B] border border-[#D6395B]">
                   {s.language}
                 </span>
-                <span className="text-[10px] font-mono text-slate-400">{s.target_sector}</span>
+                <span className="text-[10px] font-mono text-[#7A7390] font-semibold">{s.target_sector}</span>
               </div>
-              <h4 className="text-xs font-bold text-white line-clamp-1">{s.title}</h4>
-              <p className="text-[11px] text-slate-400 line-clamp-2 italic">
+              <h4 className="text-xs font-bold text-[#3A3450] line-clamp-1">{s.title}</h4>
+              <p className="text-[11px] text-[#7A7390] line-clamp-2 italic">
                 &ldquo;{s.text}&rdquo;
               </p>
             </button>
@@ -145,29 +134,29 @@ export default function MultilingualPage() {
       </div>
 
       {/* Custom Vernacular Voice Synthesizer */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-        <h3 className="text-xs font-bold text-white uppercase font-mono tracking-wider flex items-center space-x-2">
-          <Sparkles className="w-4 h-4 text-cyan-400" />
+      <div className="rounded-3xl bg-[#F3EEFB] p-6 sm:p-7 border border-[#E3DCF0] space-y-4 shadow-sm">
+        <h3 className="text-xs font-bold text-[#3A3450] uppercase font-mono tracking-wider flex items-center space-x-2">
+          <Sparkles className="w-4 h-4 text-[#8E79C9]" />
           <span>Interactive Regional Voice Clone Synthesizer</span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2 space-y-2">
-            <label className="text-xs font-mono text-slate-400">
+            <label className="text-xs font-mono text-[#7A7390] font-semibold">
               Input Speech in Any Indian Script (Devanagari, Tamil, Telugu, or Hinglish):
             </label>
             <textarea
               rows={3}
               value={customText}
               onChange={(e) => setCustomText(e.target.value)}
-              className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-cyan-500 focus:outline-none transition-colors"
+              className="w-full p-3.5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] text-xs text-[#3A3450] focus:border-[#B8A6E8] focus:outline-none transition-colors font-mono leading-relaxed shadow-xs"
               placeholder="Enter text to synthesize and evaluate..."
             />
           </div>
 
           <div className="space-y-3">
             <div>
-              <label className="text-xs font-mono text-slate-400 block mb-1">Target Language:</label>
+              <label className="text-xs font-mono text-[#7A7390] font-semibold block mb-1">Target Language:</label>
               <select
                 value={customLang}
                 onChange={(e) => {
@@ -177,7 +166,7 @@ export default function MultilingualPage() {
                   else if (e.target.value === "Telugu") setCustomVoice("te-IN-MohanNeural");
                   else setCustomVoice("hi-IN-MadhurNeural");
                 }}
-                className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
+                className="w-full p-2.5 rounded-xl bg-[#FBF7F4] border border-[#E3DCF0] text-xs font-mono text-[#3A3450] focus:outline-none focus:border-[#B8A6E8] shadow-xs"
               >
                 <option value="Hindi">Hindi (हिंदी)</option>
                 <option value="Tamil">Tamil (தமிழ்)</option>
@@ -189,16 +178,16 @@ export default function MultilingualPage() {
             <button
               onClick={handleGenerateCustom}
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
             >
               {loading ? (
                 <>
-                  <Activity className="w-4 h-4 animate-spin text-slate-950" />
+                  <Activity className="w-4 h-4 animate-spin text-[#3A3450]" />
                   <span>Synthesizing Regional Voice & Scoring...</span>
                 </>
               ) : (
                 <>
-                  <Zap className="w-4 h-4 text-slate-950" />
+                  <Zap className="w-4 h-4 text-[#3A3450]" />
                   <span>Synthesize & Analyze Vernacular Clone</span>
                 </>
               )}
@@ -209,34 +198,40 @@ export default function MultilingualPage() {
 
       {/* Analysis Result Banner & Playback */}
       {activeAnalysis && (
-        <div className="glass-panel rounded-2xl p-6 border border-cyan-500/40 space-y-6 animate-fadeIn">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <div
+          className={`rounded-3xl p-6 sm:p-7 border-2 space-y-6 animate-fadeIn shadow-md ${
+            activeAnalysis.verdict === "synthetic"
+              ? "bg-[#FCE4E4] border-[#D6395B]"
+              : "bg-[#DFF5E6] border-[#2E9E5B]"
+          }`}
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E3DCF0] pb-4">
             <div>
               <span
-                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                className={`text-[10px] font-mono font-extrabold px-3 py-1 rounded-full text-white shadow-sm ${
                   activeAnalysis.verdict === "synthetic"
-                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                    : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                    ? "bg-[#D6395B]"
+                    : "bg-[#2E9E5B]"
                 }`}
               >
                 {activeAnalysis.verdict === "synthetic" ? "CRITICAL SYNTHETIC CLONE" : "GENUINE SPEECH"}
               </span>
-              <h3 className="text-xl font-extrabold text-white mt-1">
+              <h3 className="text-xl font-black text-[#3A3450] mt-2">
                 {activeAnalysis.filename_or_label}
               </h3>
             </div>
 
             <div className="text-right">
-              <div className="text-xs font-mono text-slate-400 uppercase">Acoustic Risk Rating</div>
+              <div className="text-xs font-mono text-[#7A7390] uppercase font-semibold">Acoustic Risk Rating</div>
               <div
-                className="text-3xl font-extrabold font-mono"
+                className="text-4xl font-black font-mono mt-0.5"
                 style={{
                   color:
                     activeAnalysis.risk_score < 35
-                      ? "#10b981"
+                      ? "#2E9E5B"
                       : activeAnalysis.risk_score <= 65
-                      ? "#f59e0b"
-                      : "#f43f5e",
+                      ? "#C98A1F"
+                      : "#D6395B",
                 }}
               >
                 {activeAnalysis.risk_score.toFixed(1)}%
@@ -246,48 +241,48 @@ export default function MultilingualPage() {
 
           {/* Audio Player */}
           {audioUrl && (
-            <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center space-x-3">
-              <Volume2 className="w-4 h-4 text-cyan-400 shrink-0" />
-              <audio controls src={audioUrl} className="w-full h-8" />
+            <div className="p-4 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] flex items-center space-x-3 shadow-xs">
+              <Volume2 className="w-5 h-5 text-[#8E79C9] shrink-0" />
+              <audio controls src={audioUrl} className="w-full h-8 accent-[#B8A6E8]" />
             </div>
           )}
 
           {/* Forensic Acoustic Signatures */}
           {activeAnalysis.acoustic_features && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[10px] text-slate-400 font-mono">Pitch Dynamics (F0)</span>
-                <div className="text-sm font-bold font-mono text-white mt-0.5">
+              <div className="p-3.5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] shadow-xs">
+                <span className="text-[10px] text-[#7A7390] font-mono font-semibold">Pitch Dynamics (F0)</span>
+                <div className="text-base font-bold font-mono text-[#3A3450] mt-0.5">
                   {activeAnalysis.acoustic_features.pitch_std_hz?.toFixed(1) ?? "--"} Hz
                 </div>
-                <span className="text-[9px] text-rose-400">Flat synthetic baseline</span>
+                <span className="text-[9px] text-[#D6395B] font-semibold">Flat synthetic baseline</span>
               </div>
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[10px] text-slate-400 font-mono">Wiener Flatness</span>
-                <div className="text-sm font-bold font-mono text-cyan-300 mt-0.5">
+              <div className="p-3.5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] shadow-xs">
+                <span className="text-[10px] text-[#7A7390] font-mono font-semibold">Wiener Flatness</span>
+                <div className="text-base font-bold font-mono text-[#7c63c7] mt-0.5">
                   {activeAnalysis.acoustic_features.spectral_flatness?.toFixed(4) ?? "--"}
                 </div>
-                <span className="text-[9px] text-cyan-400">Diffusion noise floor</span>
+                <span className="text-[9px] text-[#7c63c7] font-semibold">Diffusion noise floor</span>
               </div>
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[10px] text-slate-400 font-mono">Spectral Centroid</span>
-                <div className="text-sm font-bold font-mono text-teal-300 mt-0.5">
+              <div className="p-3.5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] shadow-xs">
+                <span className="text-[10px] text-[#7A7390] font-mono font-semibold">Spectral Centroid</span>
+                <div className="text-base font-bold font-mono text-[#3a8b80] mt-0.5">
                   {activeAnalysis.acoustic_features.spectral_centroid_hz?.toFixed(0) ?? "--"} Hz
                 </div>
-                <span className="text-[9px] text-slate-500">Formant center</span>
+                <span className="text-[9px] text-[#7A7390]">Formant center</span>
               </div>
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[10px] text-slate-400 font-mono">Vocoder Anomaly</span>
-                <div className="text-sm font-bold font-mono text-rose-300 mt-0.5">
+              <div className="p-3.5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] shadow-xs">
+                <span className="text-[10px] text-[#7A7390] font-mono font-semibold">Vocoder Anomaly</span>
+                <div className="text-base font-bold font-mono text-[#D6395B] mt-0.5">
                   {activeAnalysis.acoustic_features.neural_vocoder_artifact_score?.toFixed(1) ?? "--"}/100
                 </div>
-                <span className="text-[9px] text-rose-400">Deconv artifacts</span>
+                <span className="text-[9px] text-[#D6395B] font-semibold">Deconv artifacts</span>
               </div>
             </div>
           )}
 
-          <p className="text-xs font-mono text-slate-300 leading-relaxed border-t border-slate-800 pt-3">
-            <span className="text-cyan-400 font-bold">Detection Rationale: </span>
+          <p className="text-xs font-mono text-[#3A3450] leading-relaxed border-t border-[#E3DCF0] pt-3 font-medium">
+            <span className="text-[#7c63c7] font-bold">Detection Rationale: </span>
             {activeAnalysis.reason}
           </p>
         </div>

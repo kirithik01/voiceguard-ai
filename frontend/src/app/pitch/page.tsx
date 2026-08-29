@@ -23,8 +23,6 @@ import {
 } from "lucide-react";
 
 export default function PitchPage() {
-  const [activeStep, setActiveStep] = useState<number>(1);
-
   const pillars = [
     {
       num: "01",
@@ -60,93 +58,76 @@ export default function PitchPage() {
     },
     {
       num: "05",
-      title: "Autonomous Telephony PBX Switchboard Interceptor",
-      subtitle: "SIP 200 / 302 / 403 In-Line Decision Engine",
+      title: "Telecom PBX In-Line Proxy & Autonomous SIP Routing",
+      subtitle: "G.711 Benchmarked + SIP 200/302/403 Decisioning",
       description:
-        "Integrates directly into enterprise telecom lines (Twilio, Asterisk, FreePBX). Automatically routes clean audio, diverts suspicious calls to IVR, and terminates/blacklists clones.",
-      tag: "TELECOM INFRASTRUCTURE"
+        "Acts as an active SIP proxy switchboard. Analyzes telecom RTP voice packets before call bridge completes. Automatically diverts suspicious callers or returns SIP 403 Forbidden.",
+      tag: "TELECOM GATEWAY"
     },
     {
       num: "06",
-      title: "Regulatory Compliance & Court Dossiers",
-      subtitle: "Indian IT Act Sec 66D & Evidence Act Sec 65B",
+      title: "Court-Admissible Electronic Evidence (Section 65B)",
+      subtitle: "Indian IT Act Sec 66D + SHA-256 Chain of Custody",
       description:
-        "Automatically outputs SHA-256 evidence chain-of-custody checksums and printable court-admissible forensic dossiers standardizing CERT-In and RBI cyber fraud guidelines.",
-      tag: "LEGAL COMPLIANCE"
+        "Generates formal court-ready case dossiers complete with SHA-256 evidence digests, statutory penal citations, and immutable chain-of-custody tracking for law enforcement submission.",
+      tag: "LEGAL ENFORCEMENT"
     }
   ];
 
   return (
-    <div className="space-y-12 animate-fadeIn max-w-6xl mx-auto pb-20">
+    <div className="space-y-8 animate-fadeIn max-w-7xl mx-auto pb-16">
       {/* Header Banner */}
-      <div className="text-center space-y-4 max-w-3xl mx-auto pt-4">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-300">
-          <Award className="w-4 h-4 text-cyan-400" />
-          <span>HACKATHON JURY EVALUATION CONSOLE</span>
-        </div>
-        <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-          VoiceGuard AI Defense Architecture
-        </h1>
-        <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-          The next-generation autonomous enterprise platform engineered to detect, intercept, and prevent neural voice cloning and executive impersonation attacks.
-        </p>
-      </div>
-
-      {/* Problem vs Solution Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="glass-panel-danger rounded-2xl p-6 border border-rose-500/40 space-y-3">
-          <span className="text-xs font-mono text-rose-400 font-bold uppercase tracking-wider">
-            The Critical Challenge
-          </span>
-          <h3 className="text-lg font-bold text-white">
-            Generative AI Voice Cloning Weaponization
-          </h3>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            Off-the-shelf generative voice tools (ElevenLabs, Bark, Tortoise, Edge-TTS) require only 3 seconds of reference audio to clone any CEO or officer with 95%+ perceived similarity, costing enterprises billions annually via unauthorized wire transfers and helpdesk MFA resets.
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCF0] pb-6">
+        <div>
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B8A6E8]/30 border border-[#B8A6E8] text-xs font-mono text-[#3A3450] font-semibold mb-2">
+            <Award className="w-3.5 h-3.5 text-[#3A3450]" />
+            <span>HACKATHON JURY EVALUATION & ARCHITECTURE CONSOLE</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3A3450] tracking-tight">
+            VoiceGuard AI — Defense Architecture & Jury Pitch
+          </h1>
+          <p className="text-sm text-[#7A7390] mt-1">
+            Enterprise voice cloning defense engineered to satisfy all detection, prevention, and forensic integrity criteria.
           </p>
         </div>
 
-        <div className="glass-panel-safe rounded-2xl p-6 border border-emerald-500/40 space-y-3">
-          <span className="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">
-            The VoiceGuard Breakthrough
-          </span>
-          <h3 className="text-lg font-bold text-white">
-            Physics-Grounded Defense-in-Depth
-          </h3>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            Rather than relying on brittle black-box models, VoiceGuard exploits the mathematical limits of neural vocoders: pitch flatlining, spectral flatness diffusion noise, and vocal tract formant mismatches, delivering sub-150ms in-line interception across telephony and WebRTC.
-          </p>
+        <div className="flex items-center space-x-3">
+          <Link
+            href="/demo-lab"
+            className="px-4 py-2.5 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold text-xs shadow-sm transition-all flex items-center space-x-1.5"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Launch Judge Demo Lab</span>
+          </Link>
         </div>
       </div>
 
-      {/* The 6 Pillars Grid */}
-      <div className="space-y-6">
-        <div className="text-center space-y-1">
-          <h2 className="text-xl font-bold text-white">
-            The 6-Pillar Defense-in-Depth Architecture
-          </h2>
-          <p className="text-xs text-slate-400">
-            Engineered to cover the complete attack lifecycle: from source prevention to court testimony.
-          </p>
-        </div>
+      {/* 6 Core Defense Pillars Grid */}
+      <div className="space-y-4">
+        <h2 className="text-base font-bold text-[#3A3450] flex items-center space-x-2">
+          <Shield className="w-4 h-4 text-[#8E79C9]" />
+          <span>The 6 Pillars of VoiceGuard Defense Architecture</span>
+        </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {pillars.map((p) => (
             <div
               key={p.num}
-              className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-3 hover:border-cyan-500/50 transition-all group"
+              className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-3 flex flex-col justify-between shadow-sm hover:border-[#B8A6E8] transition-all"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-black font-mono text-cyan-400/40 group-hover:text-cyan-400 transition-colors">
-                  {p.num}
-                </span>
-                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                  {p.tag}
-                </span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xl font-black font-mono text-[#7c63c7]">{p.num}</span>
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#B8A6E8]/30 text-[#3A3450] border border-[#B8A6E8]">
+                    {p.tag}
+                  </span>
+                </div>
+
+                <h3 className="text-sm font-bold text-[#3A3450]">{p.title}</h3>
+                <p className="text-xs text-[#7c63c7] font-mono font-semibold">{p.subtitle}</p>
               </div>
-              <h4 className="text-sm font-bold text-white">{p.title}</h4>
-              <p className="text-xs font-mono text-cyan-300/80">{p.subtitle}</p>
-              <p className="text-xs text-slate-400 leading-relaxed pt-1">
+
+              <p className="text-xs text-[#7A7390] leading-relaxed pt-2 border-t border-[#E3DCF0]">
                 {p.description}
               </p>
             </div>
@@ -155,75 +136,75 @@ export default function PitchPage() {
       </div>
 
       {/* Competitive Benchmark Comparison Table */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+      <div className="rounded-3xl bg-[#F3EEFB] p-6 sm:p-7 border border-[#E3DCF0] space-y-4 shadow-sm">
         <div>
-          <h3 className="text-base font-bold text-white flex items-center space-x-2">
-            <Zap className="w-4 h-4 text-cyan-400" />
+          <h3 className="text-base font-bold text-[#3A3450] flex items-center space-x-2">
+            <Zap className="w-4 h-4 text-[#C98A1F]" />
             <span>Competitive Defense Benchmark</span>
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-[#7A7390] mt-0.5">
             How VoiceGuard AI compares against traditional heuristics and legacy solutions.
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-slate-800">
+        <div className="overflow-x-auto rounded-2xl border border-[#E3DCF0]">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+            <thead className="bg-[#F3EEFB] text-[#7A7390] uppercase tracking-wider border-b border-[#E3DCF0]">
               <tr>
-                <th className="py-3 px-4">Feature / Capability</th>
-                <th className="py-3 px-4 text-cyan-400 font-bold">VoiceGuard AI (Ours)</th>
-                <th className="py-3 px-4 text-slate-400">Basic MFCC Classifiers</th>
-                <th className="py-3 px-4 text-slate-400">Legacy Telecom Gateways</th>
+                <th className="py-3 px-4 font-bold">Feature / Capability</th>
+                <th className="py-3 px-4 text-[#2E9E5B] font-extrabold">VoiceGuard AI (Ours)</th>
+                <th className="py-3 px-4 text-[#7A7390] font-semibold">Basic MFCC Classifiers</th>
+                <th className="py-3 px-4 text-[#7A7390] font-semibold">Legacy Telecom Gateways</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/70 bg-slate-900/40">
+            <tbody className="divide-y divide-[#E3DCF0] bg-[#FBF7F4]">
               <tr>
-                <td className="py-3 px-4 text-white font-sans font-semibold">
+                <td className="py-3 px-4 text-[#3A3450] font-sans font-bold">
                   Detection Speed (Latency)
                 </td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">&lt; 150 ms (Real-time)</td>
-                <td className="py-3 px-4 text-slate-400">1 - 3 seconds</td>
-                <td className="py-3 px-4 text-slate-400">Post-call batch log</td>
+                <td className="py-3 px-4 text-[#2E9E5B] font-extrabold">&lt; 150 ms (Real-time)</td>
+                <td className="py-3 px-4 text-[#7A7390]">1 - 3 seconds</td>
+                <td className="py-3 px-4 text-[#7A7390]">Post-call batch log</td>
               </tr>
               <tr>
-                <td className="py-3 px-4 text-white font-sans font-semibold">
+                <td className="py-3 px-4 text-[#3A3450] font-sans font-bold">
                   Dual-Engine Identity (Who is calling?)
                 </td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Formant Biometrics)</td>
-                <td className="py-3 px-4 text-rose-400">No (Spoof score only)</td>
-                <td className="py-3 px-4 text-slate-400">Caller ID metadata only</td>
+                <td className="py-3 px-4 text-[#2E9E5B] font-extrabold">Yes (Formant Biometrics)</td>
+                <td className="py-3 px-4 text-[#D6395B] font-bold">No (Spoof score only)</td>
+                <td className="py-3 px-4 text-[#7A7390]">Caller ID metadata only</td>
               </tr>
               <tr>
-                <td className="py-3 px-4 text-white font-sans font-semibold">
+                <td className="py-3 px-4 text-[#3A3450] font-sans font-bold">
                   Source Attack Prevention
                 </td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Acoustic Watermarking)</td>
-                <td className="py-3 px-4 text-rose-400">None</td>
-                <td className="py-3 px-4 text-rose-400">None</td>
+                <td className="py-3 px-4 text-[#2E9E5B] font-extrabold">Yes (Acoustic Watermarking)</td>
+                <td className="py-3 px-4 text-[#D6395B] font-bold">None</td>
+                <td className="py-3 px-4 text-[#D6395B] font-bold">None</td>
               </tr>
               <tr>
-                <td className="py-3 px-4 text-white font-sans font-semibold">
+                <td className="py-3 px-4 text-[#3A3450] font-sans font-bold">
                   Telephony PBX In-Line Routing
                 </td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">SIP 200/302/403 Autonomous</td>
-                <td className="py-3 px-4 text-rose-400">Manual API</td>
-                <td className="py-3 px-4 text-slate-400">Simple DTMF IVR</td>
+                <td className="py-3 px-4 text-[#2E9E5B] font-extrabold">SIP 200/302/403 Autonomous</td>
+                <td className="py-3 px-4 text-[#D6395B] font-bold">Manual API</td>
+                <td className="py-3 px-4 text-[#7A7390]">Simple DTMF IVR</td>
               </tr>
               <tr>
-                <td className="py-3 px-4 text-white font-sans font-semibold">
+                <td className="py-3 px-4 text-[#3A3450] font-sans font-bold">
                   Robustness to 8kHz Phone Lines
                 </td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">Enterprise Grade (G.711 Benchmarked)</td>
-                <td className="py-3 px-4 text-rose-400">High False Positives</td>
-                <td className="py-3 px-4 text-slate-400">N/A</td>
+                <td className="py-3 px-4 text-[#2E9E5B] font-extrabold">Enterprise Grade (G.711 Benchmarked)</td>
+                <td className="py-3 px-4 text-[#D6395B] font-bold">High False Positives</td>
+                <td className="py-3 px-4 text-[#7A7390]">N/A</td>
               </tr>
               <tr>
-                <td className="py-3 px-4 text-white font-sans font-semibold">
+                <td className="py-3 px-4 text-[#3A3450] font-sans font-bold">
                   Court-Admissible Legal Dossiers
                 </td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Sec 65B & Sec 66D SHA-256)</td>
-                <td className="py-3 px-4 text-rose-400">None</td>
-                <td className="py-3 px-4 text-slate-400">Raw CDR logs</td>
+                <td className="py-3 px-4 text-[#2E9E5B] font-extrabold">Yes (Sec 65B & Sec 66D SHA-256)</td>
+                <td className="py-3 px-4 text-[#D6395B] font-bold">None</td>
+                <td className="py-3 px-4 text-[#7A7390]">Raw CDR logs</td>
               </tr>
             </tbody>
           </table>
@@ -231,13 +212,13 @@ export default function PitchPage() {
       </div>
 
       {/* 1-Click Interactive Guided Demo Showcase */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-5">
+      <div className="rounded-3xl bg-[#F3EEFB] p-6 sm:p-7 border border-[#E3DCF0] space-y-5 shadow-sm">
         <div>
-          <h3 className="text-base font-bold text-white flex items-center space-x-2">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
+          <h3 className="text-base font-bold text-[#3A3450] flex items-center space-x-2">
+            <Sparkles className="w-4 h-4 text-[#8E79C9]" />
             <span>Interactive 4-Step Hackathon Demonstration Guide</span>
           </h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#7A7390] mt-1">
             Follow this 1-click sequence to demonstrate the entire VoiceGuard ecosystem during pitch time:
           </p>
         </div>
@@ -245,52 +226,52 @@ export default function PitchPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             href="/demo-lab"
-            className="p-4 rounded-xl glass-panel border border-slate-800 hover:border-cyan-500/60 transition-all space-y-2 group"
+            className="p-5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] hover:border-[#B8A6E8] transition-all space-y-2 group shadow-xs hover:-translate-y-0.5"
           >
-            <span className="text-[10px] font-mono text-cyan-400 font-bold">STEP 1</span>
-            <h4 className="text-xs font-bold text-white group-hover:text-cyan-300">
+            <span className="text-[10px] font-mono text-[#7c63c7] font-bold">STEP 1</span>
+            <h4 className="text-xs font-bold text-[#3A3450] group-hover:text-[#7c63c7]">
               Demo Lab & Clone Generator
             </h4>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-[#7A7390]">
               Synthesize an AI clone in real-time and watch VoiceGuard flag it with 95%+ confidence.
             </p>
           </Link>
 
           <Link
             href="/live"
-            className="p-4 rounded-xl glass-panel border border-slate-800 hover:border-cyan-500/60 transition-all space-y-2 group"
+            className="p-5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] hover:border-[#B8A6E8] transition-all space-y-2 group shadow-xs hover:-translate-y-0.5"
           >
-            <span className="text-[10px] font-mono text-cyan-400 font-bold">STEP 2</span>
-            <h4 className="text-xs font-bold text-white group-hover:text-cyan-300">
+            <span className="text-[10px] font-mono text-[#7c63c7] font-bold">STEP 2</span>
+            <h4 className="text-xs font-bold text-[#3A3450] group-hover:text-[#7c63c7]">
               Live Microphone Shield
             </h4>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-[#7A7390]">
               Speak into the microphone: verify continuous rolling risk score and Vocal OTP challenge.
             </p>
           </Link>
 
           <Link
             href="/voiceprint"
-            className="p-4 rounded-xl glass-panel border border-slate-800 hover:border-cyan-500/60 transition-all space-y-2 group"
+            className="p-5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] hover:border-[#B8A6E8] transition-all space-y-2 group shadow-xs hover:-translate-y-0.5"
           >
-            <span className="text-[10px] font-mono text-cyan-400 font-bold">STEP 3</span>
-            <h4 className="text-xs font-bold text-white group-hover:text-cyan-300">
+            <span className="text-[10px] font-mono text-[#7c63c7] font-bold">STEP 3</span>
+            <h4 className="text-xs font-bold text-[#3A3450] group-hover:text-[#7c63c7]">
               Dual-Engine Biometrics
             </h4>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-[#7A7390]">
               Test enrolled CEO Rajesh Verma against genuine voice vs synthetic wire fraud clone.
             </p>
           </Link>
 
           <Link
             href="/war-room"
-            className="p-4 rounded-xl glass-panel border border-slate-800 hover:border-cyan-500/60 transition-all space-y-2 group"
+            className="p-5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] hover:border-[#B8A6E8] transition-all space-y-2 group shadow-xs hover:-translate-y-0.5"
           >
-            <span className="text-[10px] font-mono text-cyan-400 font-bold">STEP 4</span>
-            <h4 className="text-xs font-bold text-white group-hover:text-cyan-300">
+            <span className="text-[10px] font-mono text-[#7c63c7] font-bold">STEP 4</span>
+            <h4 className="text-xs font-bold text-[#3A3450] group-hover:text-[#7c63c7]">
               Telephony War Room
             </h4>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-[#7A7390]">
               Simulate an inbound PBX attack and watch autonomous SIP 403 Disconnect and Blacklisting.
             </p>
           </Link>

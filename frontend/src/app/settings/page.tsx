@@ -74,29 +74,32 @@ export default function SettingsPage() {
       setLowThreshold(data.low_risk_threshold);
       setHighThreshold(data.high_risk_threshold);
       setMitigation(data.auto_mitigation);
-      setSiemUrl(data.siem_webhook_url);
+      setSiemUrl(data.siem_webhook_url || "");
     } catch (err) {
-      console.error("Failed to fetch settings:", err);
+      console.error("Failed to load settings:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleTierSelect = (tier: "strict" | "standard" | "permissive") => {
+  const handleApplyPresetTier = (tier: "strict" | "standard" | "permissive") => {
     setSecurityTier(tier);
     if (tier === "strict") {
-      setLowThreshold(20.0);
-      setHighThreshold(45.0);
+      setLowThreshold(25.0);
+      setHighThreshold(55.0);
+      setMitigation("vocal_otp");
     } else if (tier === "standard") {
       setLowThreshold(35.0);
       setHighThreshold(65.0);
-    } else if (tier === "permissive") {
+      setMitigation("vocal_otp");
+    } else {
       setLowThreshold(45.0);
       setHighThreshold(75.0);
+      setMitigation("log_only");
     }
   };
 
-  const handleSaveSettings = async (e: React.FormEvent) => {
+  const handleSavePolicy = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setSaveMessage(null);
@@ -109,8 +112,8 @@ export default function SettingsPage() {
         siem_webhook_url: siemUrl,
       });
       setSettings(updated);
-      setSaveMessage("Enterprise policy and thresholds updated successfully across all nodes!");
-      setTimeout(() => setSaveMessage(null), 5000);
+      setSaveMessage("Threat defense policy updated and propagated to ML scoring engine.");
+      setTimeout(() => setSaveMessage(null), 4000);
     } catch (err: any) {
       alert("Failed to save settings: " + err.message);
     } finally {
@@ -122,13 +125,14 @@ export default function SettingsPage() {
     if (!embedFile) return;
     setEmbedding(true);
     setEmbedSuccess(false);
+    setWatermarkedBlobUrl(null);
     try {
       const blob = await embedAudioWatermark(embedFile, embedTag);
       const url = URL.createObjectURL(blob);
       setWatermarkedBlobUrl(url);
       setEmbedSuccess(true);
     } catch (err: any) {
-      alert("Watermarking failed: " + err.message);
+      alert("Watermark embedding failed: " + err.message);
     } finally {
       setEmbedding(false);
     }
@@ -140,8 +144,8 @@ export default function SettingsPage() {
     setVerifyResult(null);
     setVerifyError(null);
     try {
-      const res = await verifyAudioWatermark(verifyFile);
-      setVerifyResult(res);
+      const result = await verifyAudioWatermark(verifyFile);
+      setVerifyResult(result);
     } catch (err: any) {
       setVerifyError(err.message || "Watermark verification failed.");
     } finally {
@@ -150,206 +154,186 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn max-w-6xl mx-auto pb-16">
+    <div className="space-y-8 animate-fadeIn max-w-5xl mx-auto pb-20">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCF0] pb-6">
         <div>
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-300 mb-2">
-            <Sliders className="w-3.5 h-3.5 text-cyan-400" />
-            <span>ENTERPRISE POLICY TUNING & ATTACK PREVENTION STUDIO</span>
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B8A6E8]/30 border border-[#B8A6E8] text-xs font-mono text-[#3A3450] font-semibold mb-2">
+            <Sliders className="w-3.5 h-3.5 text-[#3A3450]" />
+            <span>SECURITY ARCHITECTURE & DEFENSE POLICY</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3A3450] tracking-tight">
             Security Policy & Acoustic Watermarking
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Configure risk classification thresholds, automated mitigation triggers, and embed inaudible cryptographic watermarks for attack prevention.
+          <p className="text-sm text-[#7A7390] mt-1">
+            Tune ML detection sensitivity thresholds, default voice interception mitigations, and watermark provenance.
           </p>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex items-center space-x-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800 self-start md:self-auto text-xs font-mono">
+        {/* Tab Navigation */}
+        <div className="flex items-center space-x-1 bg-[#F3EEFB] p-1.5 rounded-2xl border border-[#E3DCF0] shadow-sm">
           <button
             onClick={() => setActiveTab("policy")}
-            className={`px-4 py-2 rounded-lg transition-all flex items-center space-x-1.5 ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               activeTab === "policy"
-                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold"
-                : "text-slate-400 hover:text-white"
+                ? "bg-[#B8A6E8] text-[#3A3450] shadow-xs"
+                : "text-[#7A7390] hover:text-[#3A3450]"
             }`}
           >
-            <Sliders className="w-3.5 h-3.5" />
-            <span>Security Policy</span>
+            Triage Policies
           </button>
-
           <button
             onClick={() => setActiveTab("watermark")}
-            className={`px-4 py-2 rounded-lg transition-all flex items-center space-x-1.5 ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               activeTab === "watermark"
-                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold"
-                : "text-slate-400 hover:text-white"
+                ? "bg-[#B8A6E8] text-[#3A3450] shadow-xs"
+                : "text-[#7A7390] hover:text-[#3A3450]"
             }`}
           >
-            <Fingerprint className="w-3.5 h-3.5" />
-            <span>Watermarking Studio</span>
+            Watermark Studio (Prevention)
           </button>
         </div>
       </div>
 
       {saveMessage && (
-        <div className="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs flex items-center space-x-2 animate-fadeIn font-mono">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="p-3.5 rounded-2xl bg-[#DFF5E6] border border-[#2E9E5B] text-[#2E9E5B] text-xs font-bold flex items-center space-x-2 animate-fadeIn shadow-sm">
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
           <span>{saveMessage}</span>
         </div>
       )}
 
       {activeTab === "policy" ? (
-        /* Tab 1: Enterprise Security Policy */
-        <form onSubmit={handleSaveSettings} className="space-y-8">
-          {/* Security Posture Preset Tiers */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center space-x-2">
-              <Shield className="w-4 h-4 text-cyan-400" />
-              <span>Operational Security Posture Presets</span>
+        /* Tab 1: ML Threshold Tuning & Mitigations */
+        <form onSubmit={handleSavePolicy} className="space-y-6">
+          {/* Preset Security Tiers */}
+          <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#3A3450] uppercase font-mono tracking-wider flex items-center space-x-2">
+              <Shield className="w-4 h-4 text-[#8E79C9]" />
+              <span>Risk Sensitivity Tiers</span>
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Strict Banking Tier */}
-              <div
-                onClick={() => handleTierSelect("strict")}
-                className={`p-5 rounded-2xl border cursor-pointer transition-all ${
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <button
+                type="button"
+                onClick={() => handleApplyPresetTier("strict")}
+                className={`p-5 rounded-2xl border text-left transition-all shadow-xs ${
                   securityTier === "strict"
-                    ? "glass-panel-danger border-rose-500/60 shadow-lg shadow-rose-500/10"
-                    : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
+                    ? "bg-[#FCE4E4] border-[#D6395B]"
+                    : "bg-[#FBF7F4] border-[#E3DCF0] hover:border-[#B8A6E8]"
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                    STRICT BANKING
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#D6395B]">Strict Tier</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FCE4E4] text-[#D6395B] border border-[#D6395B] font-extrabold">
+                    Zero-Trust
                   </span>
-                  {securityTier === "strict" && <CheckCircle2 className="w-4 h-4 text-rose-400" />}
                 </div>
-                <h4 className="text-sm font-bold text-white">Wire Transfers & Executive MFA</h4>
-                <p className="text-xs text-slate-400 mt-1">
-                  Aggressive sensitivity. Any subtle phase fluctuation flags for out-of-band verification.
+                <p className="text-[11px] text-[#7A7390] mt-2">
+                  High &gt; 55%. Optimized for high-value financial transfers and executive line protection.
                 </p>
-                <div className="mt-4 pt-3 border-t border-slate-800 text-[11px] font-mono text-slate-400 flex justify-between">
-                  <span>Low: &lt;20%</span>
-                  <span className="text-rose-400 font-bold">High: &gt;45%</span>
-                </div>
-              </div>
+              </button>
 
-              {/* Standard Corporate Tier */}
-              <div
-                onClick={() => handleTierSelect("standard")}
-                className={`p-5 rounded-2xl border cursor-pointer transition-all ${
+              <button
+                type="button"
+                onClick={() => handleApplyPresetTier("standard")}
+                className={`p-5 rounded-2xl border text-left transition-all shadow-xs ${
                   securityTier === "standard"
-                    ? "glass-panel border-cyan-500/60 shadow-lg shadow-cyan-500/10"
-                    : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
+                    ? "bg-[#F3EEFB] border-[#B8A6E8] shadow-md"
+                    : "bg-[#FBF7F4] border-[#E3DCF0] hover:border-[#B8A6E8]"
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                    STANDARD CORPORATE
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#3A3450]">Standard Tier</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#DFF5E6] text-[#2E9E5B] border border-[#2E9E5B] font-bold">
+                    Recommended
                   </span>
-                  {securityTier === "standard" && <CheckCircle2 className="w-4 h-4 text-cyan-400" />}
                 </div>
-                <h4 className="text-sm font-bold text-white">Everyday Internal Operations</h4>
-                <p className="text-xs text-slate-400 mt-1">
-                  Balanced defense matrix. Minimal false positives while arresting neural clones.
+                <p className="text-[11px] text-[#7A7390] mt-2">
+                  Low &lt; 35%, High &gt; 65%. Balanced trade-off between false alarms and defense.
                 </p>
-                <div className="mt-4 pt-3 border-t border-slate-800 text-[11px] font-mono text-slate-400 flex justify-between">
-                  <span>Low: &lt;35%</span>
-                  <span className="text-cyan-400 font-bold">High: &gt;65%</span>
-                </div>
-              </div>
+              </button>
 
-              {/* Permissive / High-Noise Tier */}
-              <div
-                onClick={() => handleTierSelect("permissive")}
-                className={`p-5 rounded-2xl border cursor-pointer transition-all ${
+              <button
+                type="button"
+                onClick={() => handleApplyPresetTier("permissive")}
+                className={`p-5 rounded-2xl border text-left transition-all shadow-xs ${
                   securityTier === "permissive"
-                    ? "glass-panel border-amber-500/60 shadow-lg shadow-amber-500/10"
-                    : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
+                    ? "bg-[#EAF6F2] border-[#A7D8D0]"
+                    : "bg-[#FBF7F4] border-[#E3DCF0] hover:border-[#B8A6E8]"
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                    HIGH-NOISE / CELL
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#3A3450]">Permissive Tier</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FBF7F4] text-[#7A7390] border border-[#E3DCF0]">
+                    Audit Only
                   </span>
-                  {securityTier === "permissive" && <CheckCircle2 className="w-4 h-4 text-amber-400" />}
                 </div>
-                <h4 className="text-sm font-bold text-white">Cellular & Low-Bandwidth Lines</h4>
-                <p className="text-xs text-slate-400 mt-1">
-                  Tolerates heavy codec compression artifacts and noisy acoustic environments.
+                <p className="text-[11px] text-[#7A7390] mt-2">
+                  High &gt; 75%. Prioritizes frictionless caller experience in noisy environments.
                 </p>
-                <div className="mt-4 pt-3 border-t border-slate-800 text-[11px] font-mono text-slate-400 flex justify-between">
-                  <span>Low: &lt;45%</span>
-                  <span className="text-amber-400 font-bold">High: &gt;75%</span>
-                </div>
-              </div>
+              </button>
             </div>
           </div>
 
           {/* Granular Threshold Sliders */}
-          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-6">
-            <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center space-x-2">
-              <Sliders className="w-4 h-4 text-cyan-400" />
-              <span>Granular Risk Classification Thresholds</span>
+          <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-6 shadow-sm">
+            <h3 className="text-sm font-bold text-[#3A3450] uppercase font-mono tracking-wider flex items-center space-x-2">
+              <Sliders className="w-4 h-4 text-[#8E79C9]" />
+              <span>Granular Detection Thresholds</span>
             </h3>
 
-            <div className="space-y-6">
-              {/* Low Risk Slider */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-300">Safe / Genuine Human Threshold:</span>
-                  <span className="text-emerald-400 font-bold">{lowThreshold.toFixed(0)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min={10}
-                  max={45}
-                  value={lowThreshold}
-                  onChange={(e) => setLowThreshold(Number(e.target.value))}
-                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
-                />
-                <p className="text-[11px] text-slate-500 font-mono">
-                  Audio with risk score below this is categorized as Genuine Human without friction.
-                </p>
+            {/* Low Risk Slider */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-mono">
+                <span className="text-[#2E9E5B] font-bold">Low Risk Ceiling (Human Baseline):</span>
+                <span className="text-[#3A3450] font-bold font-mono">{lowThreshold}%</span>
               </div>
+              <input
+                type="range"
+                min={10}
+                max={50}
+                value={lowThreshold}
+                onChange={(e) => setLowThreshold(parseFloat(e.target.value))}
+                className="w-full h-2 bg-[#E3DCF0] rounded-lg appearance-none cursor-pointer accent-[#2E9E5B]"
+              />
+              <p className="text-[11px] text-[#7A7390]">
+                Scores below this threshold are certified as Authentic Human without friction.
+              </p>
+            </div>
 
-              {/* High Risk Slider */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-300">High-Risk / Deepfake Intercept Threshold:</span>
-                  <span className="text-rose-400 font-bold">{highThreshold.toFixed(0)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min={50}
-                  max={85}
-                  value={highThreshold}
-                  onChange={(e) => setHighThreshold(Number(e.target.value))}
-                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-400"
-                />
-                <p className="text-[11px] text-slate-500 font-mono">
-                  Audio with risk score at or above this triggers automated intercept mitigations.
-                </p>
+            {/* High Risk Slider */}
+            <div className="space-y-2 pt-2">
+              <div className="flex justify-between text-xs font-mono">
+                <span className="text-[#D6395B] font-bold">High Risk Floor (Synthetic Alarm):</span>
+                <span className="text-[#3A3450] font-bold font-mono">{highThreshold}%</span>
               </div>
+              <input
+                type="range"
+                min={50}
+                max={90}
+                value={highThreshold}
+                onChange={(e) => setHighThreshold(parseFloat(e.target.value))}
+                className="w-full h-2 bg-[#E3DCF0] rounded-lg appearance-none cursor-pointer accent-[#D6395B]"
+              />
+              <p className="text-[11px] text-[#7A7390]">
+                Scores above this threshold immediately trigger the active mitigation defense.
+              </p>
             </div>
           </div>
 
-          {/* Automated Mitigation Enforcement */}
-          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center space-x-2">
-              <Zap className="w-4 h-4 text-cyan-400" />
-              <span>Automated Threat Mitigation Policy</span>
+          {/* Automated Mitigation Enforcement Selection */}
+          <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#3A3450] uppercase font-mono tracking-wider flex items-center space-x-2">
+              <Lock className="w-4 h-4 text-[#8E79C9]" />
+              <span>Default Action When High Threat is Triggered</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <label
-                className={`p-4 rounded-xl border cursor-pointer transition-all flex flex-col justify-between ${
+                className={`p-5 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between shadow-xs ${
                   mitigation === "vocal_otp"
-                    ? "bg-cyan-500/10 border-cyan-500/60"
-                    : "bg-slate-900/40 border-slate-800"
+                    ? "bg-[#F3EEFB] border-[#B8A6E8] shadow-md"
+                    : "bg-[#FBF7F4] border-[#E3DCF0]"
                 }`}
               >
                 <div className="flex items-center space-x-2">
@@ -358,20 +342,20 @@ export default function SettingsPage() {
                     name="mitigation"
                     checked={mitigation === "vocal_otp"}
                     onChange={() => setMitigation("vocal_otp")}
-                    className="accent-cyan-400"
+                    className="accent-[#B8A6E8]"
                   />
-                  <span className="text-xs font-bold text-white">Dynamic Vocal OTP</span>
+                  <span className="text-xs font-bold text-[#3A3450]">Dynamic Vocal OTP</span>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-2">
+                <p className="text-[11px] text-[#7A7390] mt-2">
                   Interrupts call with one-time randomized Vocal Challenge PIN.
                 </p>
               </label>
 
               <label
-                className={`p-4 rounded-xl border cursor-pointer transition-all flex flex-col justify-between ${
+                className={`p-5 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between shadow-xs ${
                   mitigation === "hangup"
-                    ? "bg-rose-500/10 border-rose-500/60"
-                    : "bg-slate-900/40 border-slate-800"
+                    ? "bg-[#FCE4E4] border-[#D6395B]"
+                    : "bg-[#FBF7F4] border-[#E3DCF0]"
                 }`}
               >
                 <div className="flex items-center space-x-2">
@@ -380,20 +364,20 @@ export default function SettingsPage() {
                     name="mitigation"
                     checked={mitigation === "hangup"}
                     onChange={() => setMitigation("hangup")}
-                    className="accent-rose-400"
+                    className="accent-[#D6395B]"
                   />
-                  <span className="text-xs font-bold text-white">Immediate Disconnect</span>
+                  <span className="text-xs font-bold text-[#D6395B]">Immediate Disconnect</span>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-2">
+                <p className="text-[11px] text-[#7A7390] mt-2">
                   Instantly terminates connection and blacklists caller ID.
                 </p>
               </label>
 
               <label
-                className={`p-4 rounded-xl border cursor-pointer transition-all flex flex-col justify-between ${
+                className={`p-5 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between shadow-xs ${
                   mitigation === "log_only"
-                    ? "bg-amber-500/10 border-amber-500/60"
-                    : "bg-slate-900/40 border-slate-800"
+                    ? "bg-[#FDF3DA] border-[#C98A1F]"
+                    : "bg-[#FBF7F4] border-[#E3DCF0]"
                 }`}
               >
                 <div className="flex items-center space-x-2">
@@ -402,11 +386,11 @@ export default function SettingsPage() {
                     name="mitigation"
                     checked={mitigation === "log_only"}
                     onChange={() => setMitigation("log_only")}
-                    className="accent-amber-400"
+                    className="accent-[#C98A1F]"
                   />
-                  <span className="text-xs font-bold text-white">Silent SOC Telemetry</span>
+                  <span className="text-xs font-bold text-[#C98A1F]">Silent SOC Telemetry</span>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-2">
+                <p className="text-[11px] text-[#7A7390] mt-2">
                   Alerts SOC team without alerting the attacker to gather evidence.
                 </p>
               </label>
@@ -414,9 +398,9 @@ export default function SettingsPage() {
           </div>
 
           {/* SIEM Webhook Integration */}
-          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-3">
-            <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center space-x-2">
-              <Radio className="w-4 h-4 text-cyan-400" />
+          <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-3 shadow-sm">
+            <h3 className="text-sm font-bold text-[#3A3450] uppercase font-mono tracking-wider flex items-center space-x-2">
+              <Radio className="w-4 h-4 text-[#8E79C9]" />
               <span>Enterprise SIEM / Threat Desk Webhook URL</span>
             </h3>
             <input
@@ -424,7 +408,7 @@ export default function SettingsPage() {
               value={siemUrl}
               onChange={(e) => setSiemUrl(e.target.value)}
               placeholder="https://siem.internal/api/v1/voice-threats"
-              className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-white focus:outline-none focus:border-cyan-500"
+              className="w-full p-3 rounded-xl bg-[#FBF7F4] border border-[#E3DCF0] text-xs font-mono text-[#3A3450] focus:outline-none focus:border-[#B8A6E8]"
             />
           </div>
 
@@ -433,16 +417,16 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-2 disabled:opacity-50"
+              className="px-6 py-3 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold text-xs shadow-md transition-all flex items-center space-x-2 disabled:opacity-50"
             >
               {saving ? (
                 <>
-                  <Activity className="w-4 h-4 animate-spin text-slate-950" />
+                  <Activity className="w-4 h-4 animate-spin text-[#3A3450]" />
                   <span>Propagating Policies to Core Engine...</span>
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4 text-slate-950" />
+                  <Save className="w-4 h-4 text-[#3A3450]" />
                   <span>Save & Apply Enterprise Policy</span>
                 </>
               )}
@@ -453,14 +437,14 @@ export default function SettingsPage() {
         /* Tab 2: Acoustic Watermarking Studio (Attack Prevention) */
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Section A: Embed Inaudible Watermark */}
-          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-5">
+          <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-5 shadow-sm">
             <div>
-              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-mono text-cyan-300 mb-1">
-                <Sparkles className="w-3 h-3 text-cyan-400" />
+              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-[#B8A6E8]/30 border border-[#B8A6E8] text-[10px] font-mono text-[#3A3450] font-bold mb-1">
+                <Sparkles className="w-3 h-3 text-[#3A3450]" />
                 <span>SOURCE ATTACK PREVENTION</span>
               </div>
-              <h2 className="text-base font-bold text-white">Embed Cryptographic Watermark</h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <h2 className="text-base font-bold text-[#3A3450]">Embed Cryptographic Watermark</h2>
+              <p className="text-xs text-[#7A7390] mt-1">
                 Injects an inaudible ultrasonic spread-spectrum acoustic signature (14-15.5 kHz) into authorized executive audio before release.
               </p>
             </div>
@@ -468,7 +452,7 @@ export default function SettingsPage() {
             {/* Dropzone */}
             <div
               onClick={() => embedInputRef.current?.click()}
-              className="border-2 border-dashed border-cyan-500/30 hover:border-cyan-400/60 rounded-xl p-6 text-center cursor-pointer bg-slate-900/40 transition-all group"
+              className="border-2 border-dashed border-[#B8A6E8] hover:border-[#8E79C9] rounded-2xl p-6 text-center cursor-pointer bg-[#FBF7F4] hover:bg-[#EAF6F2] transition-all group shadow-xs"
             >
               <input
                 type="file"
@@ -477,77 +461,76 @@ export default function SettingsPage() {
                 onChange={(e) => e.target.files && setEmbedFile(e.target.files[0])}
                 className="hidden"
               />
-              <Upload className="w-7 h-7 text-cyan-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-              <p className="text-xs font-bold text-white">
+              <Upload className="w-7 h-7 text-[#8E79C9] mx-auto mb-2 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-bold text-[#3A3450]">
                 {embedFile ? embedFile.name : "Select clean corporate audio file"}
               </p>
-              <p className="text-[11px] text-slate-500 mt-1">Supports WAV, MP3, FLAC</p>
+              <p className="text-[11px] text-[#7A7390] mt-1">Supports WAV, MP3, FLAC</p>
             </div>
 
             <div className="text-xs font-mono space-y-1">
-              <label className="text-slate-400 block">Corporate Cryptographic Tag:</label>
+              <label className="text-[#7A7390] font-semibold block">Corporate Cryptographic Tag:</label>
               <input
                 type="text"
                 value={embedTag}
                 onChange={(e) => setEmbedTag(e.target.value)}
-                className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-white text-xs"
+                className="w-full p-2.5 rounded-xl bg-[#FBF7F4] border border-[#E3DCF0] text-[#3A3450] text-xs focus:outline-none focus:border-[#B8A6E8]"
               />
             </div>
 
             <button
               onClick={handleEmbedWatermark}
               disabled={embedding || !embedFile}
-              className="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center space-x-2 transition-all disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold text-xs flex items-center justify-center space-x-2 transition-all disabled:opacity-50 shadow-sm"
             >
               {embedding ? (
                 <>
-                  <Activity className="w-3.5 h-3.5 animate-spin" />
-                  <span>Synthesizing Ultrasonic Carrier Watermark...</span>
+                  <Activity className="w-4 h-4 animate-spin text-[#3A3450]" />
+                  <span>Synthesizing Spread-Spectrum Acoustic Watermark...</span>
                 </>
               ) : (
                 <>
-                  <Lock className="w-3.5 h-3.5" />
-                  <span>Embed Inaudible Watermark</span>
+                  <Sparkles className="w-4 h-4 text-[#3A3450]" />
+                  <span>Inject Ultrasonic Provenance Watermark</span>
                 </>
               )}
             </button>
 
             {embedSuccess && watermarkedBlobUrl && (
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-3 animate-fadeIn">
-                <div className="flex items-center space-x-2 text-emerald-400 text-xs font-bold">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Acoustic Watermark Embedded Successfully!</span>
+              <div className="p-4 rounded-2xl bg-[#DFF5E6] border border-[#2E9E5B] space-y-2 animate-fadeIn shadow-sm">
+                <div className="flex items-center space-x-2 text-[#2E9E5B] text-xs font-bold">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>Watermark embedded successfully! Imperceptible to human ear.</span>
                 </div>
-                <audio src={watermarkedBlobUrl} controls className="w-full h-8" />
                 <a
                   href={watermarkedBlobUrl}
                   download={`watermarked_${embedFile?.name || "audio.wav"}`}
-                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-mono"
+                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#2E9E5B] text-white text-xs font-bold shadow-xs hover:bg-[#26854d] transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download Watermarked Master</span>
+                  <span>Download Protected Audio</span>
                 </a>
               </div>
             )}
           </div>
 
-          {/* Section B: Verify Watermark Provenance */}
-          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-5">
+          {/* Section B: Verify Audio Watermark */}
+          <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-5 shadow-sm">
             <div>
-              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-mono text-emerald-300 mb-1">
-                <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                <span>INBOUND PROVENANCE VERIFIER</span>
+              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-[#A7D8D0]/40 border border-[#A7D8D0] text-[10px] font-mono text-[#3A3450] font-bold mb-1">
+                <ShieldCheck className="w-3 h-3 text-[#3A3450]" />
+                <span>INTEGRITY VERIFICATION</span>
               </div>
-              <h2 className="text-base font-bold text-white">Verify Corporate Provenance</h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Inspects inbound audio streams for authentic enterprise watermarks to verify source legitimacy instantly.
+              <h2 className="text-base font-bold text-[#3A3450]">Verify Watermark Authenticity</h2>
+              <p className="text-xs text-[#7A7390] mt-1">
+                Scans an incoming voice recording to detect and decode any embedded corporate watermarks.
               </p>
             </div>
 
             {/* Dropzone */}
             <div
               onClick={() => verifyInputRef.current?.click()}
-              className="border-2 border-dashed border-emerald-500/30 hover:border-emerald-400/60 rounded-xl p-6 text-center cursor-pointer bg-slate-900/40 transition-all group"
+              className="border-2 border-dashed border-[#A7D8D0] hover:border-[#8FC9BF] rounded-2xl p-6 text-center cursor-pointer bg-[#FBF7F4] hover:bg-[#EAF6F2] transition-all group shadow-xs"
             >
               <input
                 type="file"
@@ -556,67 +539,63 @@ export default function SettingsPage() {
                 onChange={(e) => e.target.files && setVerifyFile(e.target.files[0])}
                 className="hidden"
               />
-              <FileAudio className="w-7 h-7 text-emerald-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-              <p className="text-xs font-bold text-white">
-                {verifyFile ? verifyFile.name : "Select inbound audio to inspect"}
+              <FileAudio className="w-7 h-7 text-[#3a8b80] mx-auto mb-2 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-bold text-[#3A3450]">
+                {verifyFile ? verifyFile.name : "Select suspect audio to scan for watermark"}
               </p>
-              <p className="text-[11px] text-slate-500 mt-1">Extracts high-frequency SNR</p>
+              <p className="text-[11px] text-[#7A7390] mt-1">Supports WAV, MP3, FLAC</p>
             </div>
-
-            {verifyError && (
-              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
-                {verifyError}
-              </div>
-            )}
 
             <button
               onClick={handleVerifyWatermark}
               disabled={verifying || !verifyFile}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold text-xs flex items-center justify-center space-x-2 transition-all disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-[#A7D8D0] hover:bg-[#8FC9BF] text-[#3A3450] font-bold text-xs flex items-center justify-center space-x-2 transition-all disabled:opacity-50 shadow-sm"
             >
               {verifying ? (
                 <>
-                  <Activity className="w-3.5 h-3.5 animate-spin" />
-                  <span>Demodulating Ultrasonic Frequencies...</span>
+                  <Activity className="w-4 h-4 animate-spin text-[#3A3450]" />
+                  <span>Decoding High-Frequency Spectrum...</span>
                 </>
               ) : (
                 <>
-                  <Fingerprint className="w-3.5 h-3.5" />
-                  <span>Verify Watermark Authenticity</span>
+                  <ShieldCheck className="w-4 h-4 text-[#3A3450]" />
+                  <span>Scan for Corporate Watermark</span>
                 </>
               )}
             </button>
 
-            {/* Verification Result Card */}
             {verifyResult && (
               <div
-                className={`p-4 rounded-xl border space-y-3 animate-fadeIn ${
+                className={`p-4 rounded-2xl border space-y-2 animate-fadeIn shadow-sm ${
                   verifyResult.is_watermarked
-                    ? "bg-emerald-500/10 border-emerald-500/40"
-                    : "bg-amber-500/10 border-amber-500/40"
+                    ? "bg-[#DFF5E6] border-[#2E9E5B]"
+                    : "bg-[#FCE4E4] border-[#D6395B]"
                 }`}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  {verifyResult.is_watermarked ? (
+                    <CheckCircle2 className="w-5 h-5 text-[#2E9E5B]" />
+                  ) : (
+                    <AlertTriangle className="w-5 h-5 text-[#D6395B]" />
+                  )}
                   <span
-                    className={`text-xs font-mono font-bold px-2 py-0.5 rounded border ${
-                      verifyResult.is_watermarked
-                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                        : "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                    className={`text-xs font-mono font-bold ${
+                      verifyResult.is_watermarked ? "text-[#2E9E5B]" : "text-[#D6395B]"
                     }`}
                   >
-                    {verifyResult.signature_status}
-                  </span>
-                  <span className="text-xs font-mono text-slate-400">
-                    Confidence: {(verifyResult.confidence * 100).toFixed(0)}%
+                    {verifyResult.is_watermarked
+                      ? "PROVENANCE VERIFIED: Corporate Watermark Present"
+                      : "NO WATERMARK DETECTED: Untrusted External Audio"}
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed font-mono">
-                  {verifyResult.explanation}
-                </p>
-
-                <div className="pt-2 border-t border-slate-800 text-[10px] font-mono text-slate-500 truncate">
-                  SHA-256: {verifyResult.sha256_hash}
+                <div className="text-xs font-mono text-[#3A3450] space-y-1 pt-1">
+                  <div>Status: {verifyResult.signature_status}</div>
+                  {verifyResult.explanation && (
+                    <div className="text-[#7c63c7] font-bold">
+                      {verifyResult.explanation}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

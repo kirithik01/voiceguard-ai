@@ -150,24 +150,24 @@ export default function UploadPage() {
   };
 
   const getRiskColor = (score: number) => {
-    if (score < 35) return "#10b981"; // Emerald green
-    if (score <= 65) return "#f59e0b"; // Amber
-    return "#f43f5e"; // Rose red
+    if (score < 35) return "#2E9E5B"; // Saturated genuine green
+    if (score <= 65) return "#C98A1F"; // Saturated amber
+    return "#D6395B"; // Saturated synthetic crimson
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn max-w-6xl mx-auto pb-12">
+    <div className="space-y-8 animate-fadeIn max-w-6xl mx-auto pb-16">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCF0] pb-6">
         <div>
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-300 mb-2">
-            <Fingerprint className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B8A6E8]/30 border border-[#B8A6E8] text-xs font-mono text-[#3A3450] font-semibold mb-2">
+            <Fingerprint className="w-3.5 h-3.5 text-[#3A3450]" />
             <span>DEEP AUDIO FORENSIC INSPECTION</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3A3450] tracking-tight">
             Audio File Inspector
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[#7A7390] mt-1">
             Upload voice recordings for sliding-window acoustic forensics, vocoder artifact analysis, and threat verdict.
           </p>
         </div>
@@ -175,9 +175,9 @@ export default function UploadPage() {
         <div className="flex items-center space-x-3">
           <Link
             href="/history"
-            className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-600 text-xs font-semibold text-slate-300 hover:text-white transition-all flex items-center space-x-2"
+            className="px-4 py-2 rounded-xl bg-[#F3EEFB] border border-[#E3DCF0] hover:border-[#B8A6E8] text-xs font-semibold text-[#3A3450] transition-all flex items-center space-x-2 shadow-sm"
           >
-            <Activity className="w-4 h-4 text-cyan-400" />
+            <Activity className="w-4 h-4 text-[#8E79C9]" />
             <span>Threat Logs</span>
           </Link>
         </div>
@@ -189,7 +189,7 @@ export default function UploadPage() {
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onClick={() => fileInputRef.current?.click()}
-          className="relative border-2 border-dashed border-cyan-500/30 hover:border-cyan-400/70 rounded-2xl p-10 sm:p-14 text-center cursor-pointer transition-all duration-300 bg-slate-900/40 hover:bg-cyan-950/20 group"
+          className="relative border-2 border-dashed border-[#B8A6E8] hover:border-[#8E79C9] rounded-3xl p-10 sm:p-14 text-center cursor-pointer transition-all duration-300 bg-[#F3EEFB] hover:bg-[#EAF6F2] group shadow-sm"
         >
           <input
             type="file"
@@ -198,43 +198,43 @@ export default function UploadPage() {
             accept=".wav,.mp3,.m4a,.flac,.ogg"
             className="hidden"
           />
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 group-hover:bg-cyan-500/20 transition-all mb-4">
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-[#B8A6E8]/30 border border-[#B8A6E8] flex items-center justify-center text-[#3A3450] group-hover:scale-110 transition-all mb-4 shadow-sm">
             <Upload className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
-            Drop your audio file here, or <span className="text-cyan-400 underline">browse</span>
+          <h3 className="text-lg font-bold text-[#3A3450] group-hover:text-[#7c63c7] transition-colors">
+            Drop your audio file here, or <span className="text-[#8E79C9] underline">browse</span>
           </h3>
-          <p className="text-xs text-slate-400 mt-2">
-            Supports <span className="text-slate-300 font-mono font-medium">WAV, MP3, M4A, FLAC, OGG</span> (up to 25MB)
+          <p className="text-xs text-[#7A7390] mt-2">
+            Supports <span className="text-[#3A3450] font-mono font-semibold">WAV, MP3, M4A, FLAC, OGG</span> (up to 25MB)
           </p>
-          <div className="mt-6 flex items-center justify-center space-x-6 text-[11px] text-slate-500">
+          <div className="mt-6 flex items-center justify-center space-x-6 text-[11px] text-[#7A7390]">
             <span className="flex items-center space-x-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#2E9E5B]" />
               <span>Multi-Layer Forensics</span>
             </span>
             <span className="flex items-center space-x-1">
-              <Waves className="w-3.5 h-3.5 text-cyan-400" />
+              <Waves className="w-3.5 h-3.5 text-[#8E79C9]" />
               <span>Sliding Window Chunks</span>
             </span>
             <span className="flex items-center space-x-1">
-              <Lock className="w-3.5 h-3.5 text-amber-400" />
+              <Lock className="w-3.5 h-3.5 text-[#C98A1F]" />
               <span>Audit Logged in SQLite</span>
             </span>
           </div>
         </div>
       ) : (
         /* Audio Player & Analysis Controls */
-        <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+        <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E3DCF0]">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+              <div className="w-10 h-10 rounded-xl bg-[#B8A6E8]/30 border border-[#B8A6E8] flex items-center justify-center text-[#3A3450]">
                 <FileAudio className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white truncate max-w-sm sm:max-w-md">
+                <h4 className="text-sm font-bold text-[#3A3450] truncate max-w-sm sm:max-w-md">
                   {file.name}
                 </h4>
-                <p className="text-xs text-slate-400 font-mono">
+                <p className="text-xs text-[#7A7390] font-mono">
                   {(file.size / (1024 * 1024)).toFixed(2)} MB • {file.type || "Audio File"}
                 </p>
               </div>
@@ -242,7 +242,7 @@ export default function UploadPage() {
 
             <button
               onClick={resetAll}
-              className="self-start sm:self-auto px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700 flex items-center space-x-1.5"
+              className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#FBF7F4] hover:bg-[#EAF6F2] text-[#3A3450] transition-colors border border-[#E3DCF0] flex items-center space-x-1.5 shadow-sm"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Choose Another File</span>
@@ -251,7 +251,7 @@ export default function UploadPage() {
 
           {/* Interactive Player Controls */}
           {audioUrl && (
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-3">
+            <div className="p-5 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] space-y-4 shadow-sm">
               <audio
                 ref={audioRef}
                 src={audioUrl}
@@ -262,12 +262,12 @@ export default function UploadPage() {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={togglePlay}
-                  className="w-11 h-11 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 flex items-center justify-center transition-all shadow-md shadow-cyan-500/30"
+                  className="w-11 h-11 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] flex items-center justify-center transition-all shadow-sm"
                 >
                   {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
                 </button>
                 <div className="flex-1 space-y-1">
-                  <div className="flex justify-between text-xs font-mono text-slate-400">
+                  <div className="flex justify-between text-xs font-mono text-[#7A7390]">
                     <span>{formatTime(currentTime)}</span>
                     <span>{formatTime(duration)}</span>
                   </div>
@@ -278,7 +278,7 @@ export default function UploadPage() {
                     step={0.1}
                     value={currentTime}
                     onChange={handleSeek}
-                    className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                    className="w-full h-2 bg-[#E3DCF0] rounded-lg appearance-none cursor-pointer accent-[#B8A6E8]"
                   />
                 </div>
               </div>
@@ -302,16 +302,16 @@ export default function UploadPage() {
               <button
                 onClick={runAnalysis}
                 disabled={loading}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold text-sm shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 {loading ? (
                   <>
-                    <Activity className="w-4 h-4 animate-spin text-slate-950" />
+                    <Activity className="w-4 h-4 animate-spin text-[#3A3450]" />
                     <span>Extracting Acoustic Forensics...</span>
                   </>
                 ) : (
                   <>
-                    <ShieldCheck className="w-4 h-4 text-slate-950" />
+                    <ShieldCheck className="w-4 h-4 text-[#3A3450]" />
                     <span>Run Deep Forensic Analysis</span>
                   </>
                 )}
@@ -323,7 +323,7 @@ export default function UploadPage() {
 
       {/* Error Banner */}
       {error && (
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-center space-x-3 animate-fadeIn">
+        <div className="p-4 rounded-2xl bg-[#FCE4E4] border border-[#D6395B] text-[#D6395B] text-sm font-semibold flex items-center space-x-3 shadow-sm animate-fadeIn">
           <AlertTriangle className="w-5 h-5 shrink-0" />
           <span>{error}</span>
         </div>
@@ -332,21 +332,21 @@ export default function UploadPage() {
       {/* Forensic Results Section */}
       {result && (
         <div className="space-y-6 animate-fadeIn">
-          {/* Top Verdict Banner */}
+          {/* Top Verdict Banner — Saturated Accents against Pastel Cards */}
           <div
-            className={`rounded-2xl p-6 border transition-all duration-500 ${
+            className={`rounded-3xl p-6 sm:p-8 border-2 transition-all duration-500 shadow-md ${
               result.verdict === "synthetic"
-                ? "glass-panel-danger border-rose-500/50 cyber-glow-red"
-                : "glass-panel-safe border-emerald-500/50 cyber-glow-green"
+                ? "bg-[#FCE4E4] border-[#D6395B]"
+                : "bg-[#DFF5E6] border-[#2E9E5B]"
             }`}
           >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex items-start space-x-4">
                 <div
-                  className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
                     result.verdict === "synthetic"
-                      ? "bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-alert"
-                      : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                      ? "bg-[#D6395B] text-white pulse-alert"
+                      : "bg-[#2E9E5B] text-white"
                   }`}
                 >
                   {result.verdict === "synthetic" ? (
@@ -359,48 +359,52 @@ export default function UploadPage() {
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
                     <span
-                      className={`text-xs font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                      className={`text-xs font-mono font-extrabold uppercase tracking-wider px-3 py-1 rounded-full text-white shadow-sm ${
                         result.verdict === "synthetic"
-                          ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                          : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                          ? "bg-[#D6395B]"
+                          : "bg-[#2E9E5B]"
                       }`}
                     >
-                      {result.verdict === "synthetic" ? "CRITICAL THREAT" : "VERIFIED HUMAN"}
+                      {result.verdict === "synthetic" ? "🚨 CRITICAL THREAT" : "✅ VERIFIED HUMAN"}
                     </span>
-                    <span className="text-xs text-slate-400 font-mono">
+                    <span className="text-xs text-[#7A7390] font-mono font-semibold">
                       Confidence: {(result.confidence * 100).toFixed(0)}%
                     </span>
                   </div>
 
-                  <h2 className="text-2xl font-extrabold text-white">
+                  <h2
+                    className={`text-2xl sm:text-3xl font-black ${
+                      result.verdict === "synthetic" ? "text-[#D6395B]" : "text-[#2E9E5B]"
+                    }`}
+                  >
                     {result.verdict === "synthetic"
                       ? "Synthetic AI Voice Clone Detected"
                       : "Authentic Human Voice Verified"}
                   </h2>
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+                  <p className="text-xs sm:text-sm text-[#3A3450] leading-relaxed max-w-2xl font-medium">
                     {result.reason}
                   </p>
                 </div>
               </div>
 
               {/* Risk Score Meter Badge */}
-              <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-950/60 border border-slate-800 min-w-[150px]">
-                <span className="text-xs text-slate-400 uppercase font-mono tracking-wider">
+              <div className="flex flex-col items-center justify-center p-5 rounded-2xl bg-white/90 border border-[#E3DCF0] min-w-[160px] shadow-sm">
+                <span className="text-xs text-[#7A7390] uppercase font-mono tracking-wider font-semibold">
                   Risk Score
                 </span>
                 <span
-                  className="text-4xl font-extrabold font-mono mt-1"
+                  className="text-4xl sm:text-5xl font-extrabold font-mono mt-1"
                   style={{ color: getRiskColor(result.risk_score) }}
                 >
                   {result.risk_score.toFixed(1)}
-                  <span className="text-sm text-slate-500 font-normal">/100</span>
+                  <span className="text-sm text-[#7A7390] font-normal">/100</span>
                 </span>
-                <span className="text-[11px] font-mono text-slate-400 mt-1">
+                <span className="text-xs font-mono font-bold mt-1 text-[#3A3450]">
                   {result.risk_score < 35
-                    ? "Low (Human)"
+                    ? "Safe (Human)"
                     : result.risk_score <= 65
                     ? "Suspicious"
-                    : "High (Synthetic)"}
+                    : "High Threat (Clone)"}
                 </span>
               </div>
             </div>
@@ -408,25 +412,25 @@ export default function UploadPage() {
 
           {/* Temporal Sliding Chunk Chart (Recharts) */}
           {result.chunk_scores && result.chunk_scores.length > 0 && (
-            <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div className="rounded-3xl bg-[#F3EEFB] p-6 sm:p-7 border border-[#E3DCF0] space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-white flex items-center space-x-2">
-                    <Activity className="w-4 h-4 text-cyan-400" />
+                  <h3 className="text-base font-bold text-[#3A3450] flex items-center space-x-2">
+                    <Activity className="w-4 h-4 text-[#8E79C9]" />
                     <span>Temporal Sliding-Window Risk Timeline</span>
                   </h3>
-                  <p className="text-xs text-slate-400">
-                    Sliding window risk score across audio duration. Red peaks identify synthetic voice anomalies.
+                  <p className="text-xs text-[#7A7390]">
+                    Sliding window risk score across audio duration. Crimson peaks identify synthetic voice anomalies.
                   </p>
                 </div>
-                <div className="flex items-center space-x-3 text-xs font-mono">
+                <div className="flex items-center space-x-3 text-xs font-mono font-semibold">
                   <span className="flex items-center space-x-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                    <span className="text-slate-400">&lt;35% Safe</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#2E9E5B]" />
+                    <span className="text-[#3A3450]">&lt;35% Safe</span>
                   </span>
                   <span className="flex items-center space-x-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-rose-400" />
-                    <span className="text-slate-400">&gt;65% Clone</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#D6395B]" />
+                    <span className="text-[#3A3450]">&gt;65% Clone</span>
                   </span>
                 </div>
               </div>
@@ -444,7 +448,7 @@ export default function UploadPage() {
                   >
                     <XAxis
                       dataKey="time"
-                      stroke="#64748b"
+                      stroke="#7A7390"
                       fontSize={11}
                       tickLine={false}
                       angle={-25}
@@ -452,21 +456,23 @@ export default function UploadPage() {
                     />
                     <YAxis
                       domain={[0, 100]}
-                      stroke="#64748b"
+                      stroke="#7A7390"
                       fontSize={11}
                       tickLine={false}
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#090d16",
-                        borderColor: "#334155",
-                        borderRadius: "8px",
+                        backgroundColor: "#F3EEFB",
+                        borderColor: "#E3DCF0",
+                        borderRadius: "12px",
+                        color: "#3A3450",
                         fontSize: "12px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                       }}
                       formatter={(value: any) => [`${value}%`, "Risk Score"]}
                     />
-                    <ReferenceLine y={65} stroke="#f43f5e" strokeDasharray="3 3" />
-                    <ReferenceLine y={35} stroke="#10b981" strokeDasharray="3 3" />
+                    <ReferenceLine y={65} stroke="#D6395B" strokeDasharray="3 3" />
+                    <ReferenceLine y={35} stroke="#2E9E5B" strokeDasharray="3 3" />
                     <Bar dataKey="risk" radius={[4, 4, 0, 0]}>
                       {result.chunk_scores.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={getRiskColor(entry.risk_score)} />
@@ -482,60 +488,60 @@ export default function UploadPage() {
           {result.acoustic_features && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Pitch Dynamics */}
-              <div className="p-5 rounded-xl glass-panel border border-slate-800 space-y-2">
-                <span className="text-xs text-slate-400 font-mono uppercase">
-                  Pitch Dynamics ($F_0$)
+              <div className="p-5 rounded-2xl bg-[#F3EEFB] border border-[#E3DCF0] space-y-2 shadow-sm">
+                <span className="text-xs text-[#7A7390] font-mono uppercase font-semibold">
+                  Pitch Dynamics (F0)
                 </span>
-                <div className="text-2xl font-bold font-mono text-white">
+                <div className="text-2xl font-bold font-mono text-[#3A3450]">
                   {result.acoustic_features.pitch_std_hz?.toFixed(1) ?? "--"}{" "}
-                  <span className="text-xs text-slate-400 font-normal">Hz std dev</span>
+                  <span className="text-xs text-[#7A7390] font-normal">Hz std dev</span>
                 </div>
-                <div className="text-xs text-slate-300 font-medium">
+                <div className="text-xs text-[#3A3450] font-semibold">
                   {result.acoustic_features.pitch_variability_label}
                 </div>
-                <p className="text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
+                <p className="text-[11px] text-[#7A7390] pt-1 border-t border-[#E3DCF0]">
                   Natural human speech exhibits dynamic inflection (&gt;20 Hz). AI clones often exhibit rigid robotic pitch contours.
                 </p>
               </div>
 
               {/* Spectral Flatness (Wiener Entropy) */}
-              <div className="p-5 rounded-xl glass-panel border border-slate-800 space-y-2">
-                <span className="text-xs text-slate-400 font-mono uppercase">
+              <div className="p-5 rounded-2xl bg-[#F3EEFB] border border-[#E3DCF0] space-y-2 shadow-sm">
+                <span className="text-xs text-[#7A7390] font-mono uppercase font-semibold">
                   Spectral Flatness
                 </span>
-                <div className="text-2xl font-bold font-mono text-cyan-300">
+                <div className="text-2xl font-bold font-mono text-[#7c63c7]">
                   {result.acoustic_features.spectral_flatness?.toFixed(4) ?? "--"}
                 </div>
-                <div className="text-xs text-slate-300 font-medium">
+                <div className="text-xs text-[#3A3450] font-semibold">
                   {Number(result.acoustic_features.spectral_flatness) > 0.035
                     ? "⚠️ Elevated Vocoder Noise Floor"
                     : "✅ Natural Harmonic Resonances"}
                 </div>
-                <p className="text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
+                <p className="text-[11px] text-[#7A7390] pt-1 border-t border-[#E3DCF0]">
                   Neural vocoders produce uniform noise distributions in high frequency bins, raising Wiener entropy.
                 </p>
               </div>
 
               {/* Spectral Centroid */}
-              <div className="p-5 rounded-xl glass-panel border border-slate-800 space-y-2">
-                <span className="text-xs text-slate-400 font-mono uppercase">
+              <div className="p-5 rounded-2xl bg-[#F3EEFB] border border-[#E3DCF0] space-y-2 shadow-sm">
+                <span className="text-xs text-[#7A7390] font-mono uppercase font-semibold">
                   Spectral Centroid
                 </span>
-                <div className="text-2xl font-bold font-mono text-teal-300">
+                <div className="text-2xl font-bold font-mono text-[#3a8b80]">
                   {result.acoustic_features.spectral_centroid_hz?.toFixed(0) ?? "--"}{" "}
-                  <span className="text-xs text-slate-400 font-normal">Hz</span>
+                  <span className="text-xs text-[#7A7390] font-normal">Hz</span>
                 </div>
-                <div className="text-xs text-slate-300 font-medium">
+                <div className="text-xs text-[#3A3450] font-semibold">
                   Energy distribution center of mass
                 </div>
-                <p className="text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
+                <p className="text-[11px] text-[#7A7390] pt-1 border-t border-[#E3DCF0]">
                   Measures frequency weighting. Neural TTS typically lacks natural high-frequency harmonic decay.
                 </p>
               </div>
 
               {/* Neural Vocoder Artifact Score */}
-              <div className="p-5 rounded-xl glass-panel border border-slate-800 space-y-2">
-                <span className="text-xs text-slate-400 font-mono uppercase">
+              <div className="p-5 rounded-2xl bg-[#F3EEFB] border border-[#E3DCF0] space-y-2 shadow-sm">
+                <span className="text-xs text-[#7A7390] font-mono uppercase font-semibold">
                   Vocoder Artifact Index
                 </span>
                 <div
@@ -545,14 +551,14 @@ export default function UploadPage() {
                   }}
                 >
                   {result.acoustic_features.neural_vocoder_artifact_score?.toFixed(1) ?? "--"}{" "}
-                  <span className="text-xs text-slate-400 font-normal">/100</span>
+                  <span className="text-xs text-[#7A7390] font-normal">/100</span>
                 </div>
-                <div className="text-xs text-slate-300 font-medium">
+                <div className="text-xs text-[#3A3450] font-semibold">
                   {Number(result.acoustic_features.neural_vocoder_artifact_score) > 60
-                    ? "🚨 Severe Neural Synthesis Markers"
+                    ? "🚨 Severe Synthesis Markers"
                     : "✅ Organic Waveform Dynamics"}
                 </div>
-                <p className="text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
+                <p className="text-[11px] text-[#7A7390] pt-1 border-t border-[#E3DCF0]">
                   Aggregate index of phase discontinuities and deconvolutional artifacts characteristic of HiFi-GAN.
                 </p>
               </div>
@@ -560,31 +566,31 @@ export default function UploadPage() {
           )}
 
           {/* Actionable Enterprise Defense & Mitigation Card */}
-          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+          <div className="rounded-3xl bg-[#F3EEFB] p-6 sm:p-7 border border-[#E3DCF0] space-y-4 shadow-sm">
             <div className="flex items-center space-x-3">
-              <Lock className="w-5 h-5 text-cyan-400" />
+              <Lock className="w-5 h-5 text-[#8E79C9]" />
               <div>
-                <h3 className="text-base font-bold text-white">Recommended Security Response</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="text-base font-bold text-[#3A3450]">Recommended Security Response</h3>
+                <p className="text-xs text-[#7A7390]">
                   Automated threat policy recommendations based on voice impersonation risk tier.
                 </p>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-xs sm:text-sm text-slate-200 leading-relaxed font-mono">
+            <div className="p-4 rounded-2xl bg-[#FBF7F4] border border-[#E3DCF0] text-xs sm:text-sm text-[#3A3450] leading-relaxed font-mono font-medium shadow-inner">
               {result.recommended_action}
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-              <div className="flex items-center space-x-2 text-xs text-slate-400 font-mono">
+              <div className="flex items-center space-x-2 text-xs text-[#7A7390] font-mono">
                 <span>Scan ID:</span>
-                <span className="text-slate-200 select-all">{result.test_id}</span>
+                <span className="text-[#3A3450] font-bold select-all">{result.test_id}</span>
               </div>
 
               <div className="flex items-center space-x-3">
                 <Link
                   href="/history"
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition-colors border border-slate-700 flex items-center space-x-1.5"
+                  className="px-4 py-2 rounded-xl bg-[#EAF6F2] hover:bg-[#d6eee6] text-xs font-semibold text-[#3A3450] transition-colors border border-[#E3DCF0] flex items-center space-x-1.5 shadow-sm"
                 >
                   <span>View in Audit Logs</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -602,7 +608,7 @@ export default function UploadPage() {
                     a.click();
                     URL.revokeObjectURL(url);
                   }}
-                  className="px-4 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-semibold transition-colors flex items-center space-x-1.5"
+                  className="px-4 py-2 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download Forensic JSON</span>

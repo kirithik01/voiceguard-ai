@@ -13,13 +13,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-[#090d16] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
+    <html lang="en">
+      <body className="bg-[#FBF7F4] text-[#3A3450] min-h-screen flex flex-col antialiased selection:bg-[#B8A6E8] selection:text-[#3A3450]">
         <Navbar />
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {children}
         </main>
-        <footer className="border-t border-slate-800/80 bg-[#060910] py-4 text-center text-xs text-slate-500">
+        <footer className="border-t border-[#E3DCF0] bg-[#F3EEFB] py-4 text-center text-xs text-[#7A7390]">
           VoiceGuard AI — Real-Time Voice Deepfake Detection & Impersonation Attack Defense Engine
         </footer>
       </body>

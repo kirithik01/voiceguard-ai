@@ -77,11 +77,11 @@ export default function HistoryPage() {
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this scan record from threat logs?")) return;
+    if (!confirm("Are you sure you want to permanently delete this scan record?")) return;
     try {
       await deleteTestById(id);
       setHistory((prev) => prev.filter((item) => item.id !== id));
-      if (selectedScan?.test_id === id) {
+      if (selectedScan && selectedScan.test_id === id) {
         setSelectedScan(null);
       }
     } catch (err: any) {
@@ -90,7 +90,7 @@ export default function HistoryPage() {
   };
 
   const handleClearAll = async () => {
-    if (!confirm("Are you sure you want to clear ALL threat audit logs? This cannot be undone.")) return;
+    if (!confirm("WARNING: This will permanently wipe ALL threat log entries. Continue?")) return;
     try {
       await clearHistory();
       setHistory([]);
@@ -103,10 +103,9 @@ export default function HistoryPage() {
   const handleInspect = async (item: HistoryItem) => {
     setModalLoading(true);
     try {
-      const fullScan = await getTestById(item.id);
-      setSelectedScan(fullScan);
-    } catch {
-      // Fallback to item itself as AnalyzeResult
+      const detailed = await getTestById(item.id);
+      setSelectedScan(detailed);
+    } catch (err) {
       setSelectedScan({
         test_id: item.id,
         timestamp: item.timestamp,
@@ -181,227 +180,172 @@ export default function HistoryPage() {
   const getRiskBadge = (score: number) => {
     if (score < 35) {
       return (
-        <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+        <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-[#DFF5E6] text-[#2E9E5B] border border-[#2E9E5B]">
           {score.toFixed(1)}% Safe
         </span>
       );
     }
     if (score <= 65) {
       return (
-        <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+        <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-[#FDF3DA] text-[#C98A1F] border border-[#C98A1F]">
           {score.toFixed(1)}% Suspect
         </span>
       );
     }
     return (
-      <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+      <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-[#FCE4E4] text-[#D6395B] border border-[#D6395B]">
         {score.toFixed(1)}% Clone
       </span>
     );
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn max-w-7xl mx-auto pb-12">
+    <div className="space-y-8 animate-fadeIn max-w-7xl mx-auto pb-16">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCF0] pb-6">
         <div>
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-300 mb-2">
-            <History className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B8A6E8]/30 border border-[#B8A6E8] text-xs font-mono text-[#3A3450] font-semibold mb-2">
+            <History className="w-3.5 h-3.5 text-[#3A3450]" />
             <span>ENTERPRISE THREAT AUDIT TRAIL</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3A3450] tracking-tight">
             Threat Logs & Forensics History
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Permanent SQLite database of all historical voice scans, deepfake anomalies, and step-up mitigations.
+          <p className="text-sm text-[#7A7390] mt-1">
+            Permanent SQLite database of all historical voice scans, deepfake anomalies, and court-admissible dossiers.
           </p>
         </div>
 
         <div className="flex items-center space-x-3">
           <button
-            onClick={fetchHistory}
-            disabled={loading}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition-colors border border-slate-700 flex items-center space-x-1.5"
-          >
-            <RotateCcw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-cyan-400" : ""}`} />
-            <span>Refresh</span>
-          </button>
-
-          <button
             onClick={exportCSV}
             disabled={history.length === 0}
-            className="px-3.5 py-2 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 text-xs font-semibold transition-colors flex items-center space-x-1.5 disabled:opacity-40"
+            className="px-4 py-2 rounded-xl bg-[#EAF6F2] hover:bg-[#d6eee6] border border-[#E3DCF0] text-xs font-semibold text-[#3A3450] transition-all flex items-center space-x-1.5 disabled:opacity-40 shadow-sm"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-4 h-4 text-[#3A3450]" />
             <span>Export CSV</span>
           </button>
 
-          {history.length > 0 && (
-            <button
-              onClick={handleClearAll}
-              className="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold transition-colors flex items-center space-x-1.5"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Clear</span>
-            </button>
-          )}
+          <button
+            onClick={handleClearAll}
+            disabled={history.length === 0}
+            className="px-4 py-2 rounded-xl bg-[#FCE4E4] hover:bg-[#F9D2D2] border border-[#D6395B] text-xs font-bold text-[#D6395B] transition-all flex items-center space-x-1.5 disabled:opacity-40 shadow-sm"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>Clear Logs</span>
+          </button>
         </div>
       </div>
 
-      {/* Summary KPI Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl glass-panel border border-slate-800 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-mono text-slate-400 uppercase">Total Scans</span>
-            <div className="text-3xl font-extrabold text-white mt-1">{totalScans}</div>
-            <span className="text-[11px] text-slate-500">Persistent database records</span>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-            <Activity className="w-6 h-6" />
-          </div>
+      {/* Summary KPI Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="p-5 rounded-2xl bg-[#F3EEFB] border border-[#E3DCF0] space-y-1 shadow-sm">
+          <span className="text-xs font-mono text-[#7A7390] uppercase font-semibold">Total Scans Audited</span>
+          <div className="text-3xl font-black text-[#3A3450] font-mono">{totalScans}</div>
+          <span className="text-[11px] text-[#7A7390]">Across live & file channels</span>
         </div>
 
-        <div className="p-5 rounded-2xl glass-panel border border-slate-800 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-mono text-slate-400 uppercase">Clones Intercepted</span>
-            <div className="text-3xl font-extrabold text-rose-400 mt-1">{syntheticCount}</div>
-            <span className="text-[11px] text-rose-400/80">Synthetic threats flagged</span>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
-            <AlertTriangle className="w-6 h-6" />
-          </div>
+        <div className="p-5 rounded-2xl bg-[#FCE4E4] border border-[#D6395B]/40 space-y-1 shadow-sm">
+          <span className="text-xs font-mono text-[#D6395B] uppercase font-bold">Threats Intercepted</span>
+          <div className="text-3xl font-black text-[#D6395B] font-mono">{syntheticCount}</div>
+          <span className="text-[11px] text-[#D6395B]/80 font-medium">Clones flagged & blocked</span>
         </div>
 
-        <div className="p-5 rounded-2xl glass-panel border border-slate-800 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-mono text-slate-400 uppercase">Human Clearances</span>
-            <div className="text-3xl font-extrabold text-emerald-400 mt-1">{genuineCount}</div>
-            <span className="text-[11px] text-emerald-400/80">Verified authentic speakers</span>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-            <ShieldCheck className="w-6 h-6" />
-          </div>
+        <div className="p-5 rounded-2xl bg-[#DFF5E6] border border-[#2E9E5B]/40 space-y-1 shadow-sm">
+          <span className="text-xs font-mono text-[#2E9E5B] uppercase font-bold">Human Verified</span>
+          <div className="text-3xl font-black text-[#2E9E5B] font-mono">{genuineCount}</div>
+          <span className="text-[11px] text-[#2E9E5B]/80 font-medium">Organic biological voices</span>
         </div>
 
-        <div className="p-5 rounded-2xl glass-panel border border-slate-800 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-mono text-slate-400 uppercase">Average Risk Score</span>
-            <div className="text-3xl font-extrabold text-amber-400 mt-1">
-              {avgRisk}
-              <span className="text-sm font-normal text-slate-500">/100</span>
-            </div>
-            <span className="text-[11px] text-slate-500">Across all evaluated audio</span>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-            <Fingerprint className="w-6 h-6" />
-          </div>
+        <div className="p-5 rounded-2xl bg-[#F3EEFB] border border-[#E3DCF0] space-y-1 shadow-sm">
+          <span className="text-xs font-mono text-[#7A7390] uppercase font-semibold">Average Risk Rating</span>
+          <div className="text-3xl font-black text-[#7c63c7] font-mono">{avgRisk}%</div>
+          <span className="text-[11px] text-[#7A7390]">Mean composite score</span>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl glass-panel border border-slate-800">
-        {/* Search */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#F3EEFB] border border-[#E3DCF0] shadow-sm">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#7A7390] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search by filename or label..."
+            placeholder="Search by label or filename..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-lg bg-slate-900/80 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50"
+            className="w-full pl-9 pr-4 py-2 bg-[#FBF7F4] border border-[#E3DCF0] rounded-xl text-xs text-[#3A3450] placeholder-[#7A7390] focus:outline-none focus:border-[#B8A6E8] transition-colors"
           />
         </div>
 
-        {/* Verdict Filter Tabs */}
-        <div className="flex items-center space-x-1.5 w-full sm:w-auto bg-slate-900/80 p-1 rounded-lg border border-slate-800">
-          <button
-            onClick={() => setVerdictFilter("all")}
-            className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors ${
-              verdictFilter === "all"
-                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-                : "text-slate-400 hover:text-white"
-            }`}
+        <div className="flex items-center space-x-2 w-full sm:w-auto">
+          <Filter className="w-4 h-4 text-[#7A7390] shrink-0" />
+          <select
+            value={verdictFilter}
+            onChange={(e) => setVerdictFilter(e.target.value)}
+            className="w-full sm:w-auto px-3 py-2 bg-[#FBF7F4] border border-[#E3DCF0] rounded-xl text-xs font-mono text-[#3A3450] focus:outline-none focus:border-[#B8A6E8]"
           >
-            All ({history.length})
-          </button>
-          <button
-            onClick={() => setVerdictFilter("synthetic")}
-            className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors ${
-              verdictFilter === "synthetic"
-                ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            Synthetic ({syntheticCount})
-          </button>
-          <button
-            onClick={() => setVerdictFilter("genuine")}
-            className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors ${
-              verdictFilter === "genuine"
-                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            Genuine ({genuineCount})
-          </button>
+            <option value="all">All Verdicts</option>
+            <option value="synthetic">Synthetic Clones Only</option>
+            <option value="genuine">Genuine Human Only</option>
+          </select>
         </div>
       </div>
 
-      {/* Main Table / List */}
+      {/* Main Table / List on Base Background */}
       {loading ? (
-        <div className="glass-panel rounded-2xl p-12 text-center border border-slate-800">
-          <Activity className="w-8 h-8 animate-spin text-cyan-400 mx-auto mb-3" />
-          <p className="text-sm text-slate-300">Loading threat logs from database...</p>
+        <div className="rounded-3xl p-12 text-center bg-[#F3EEFB] border border-[#E3DCF0] shadow-sm">
+          <Activity className="w-8 h-8 animate-spin text-[#8E79C9] mx-auto mb-3" />
+          <p className="text-sm text-[#3A3450] font-semibold">Loading threat logs from database...</p>
         </div>
       ) : filteredHistory.length === 0 ? (
-        <div className="glass-panel rounded-2xl p-12 text-center border border-slate-800 space-y-3">
-          <FileAudio className="w-12 h-12 text-slate-600 mx-auto" />
-          <h3 className="text-base font-bold text-white">No Threat Logs Found</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+        <div className="rounded-3xl p-12 text-center bg-[#F3EEFB] border border-[#E3DCF0] space-y-3 shadow-sm">
+          <FileAudio className="w-12 h-12 text-[#7A7390] mx-auto" />
+          <h3 className="text-base font-bold text-[#3A3450]">No Threat Logs Found</h3>
+          <p className="text-xs text-[#7A7390] max-w-sm mx-auto">
             {searchQuery
               ? "No scan records match your search criteria."
               : "No audio recordings have been scanned yet. Inspect an audio file or run the live shield."}
           </p>
           <Link
             href="/upload"
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-md shadow-cyan-500/20 transition-all mt-2"
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold text-xs shadow-sm transition-all mt-2"
           >
             <Upload className="w-4 h-4" />
             <span>Inspect First File</span>
           </Link>
         </div>
       ) : (
-        <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
+        <div className="rounded-3xl border border-[#E3DCF0] overflow-hidden shadow-sm bg-[#FBF7F4]">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900/90 text-slate-400 uppercase font-mono tracking-wider border-b border-slate-800">
+              <thead className="bg-[#F3EEFB] text-[#7A7390] uppercase font-mono tracking-wider border-b border-[#E3DCF0]">
                 <tr>
-                  <th className="py-3.5 px-4 font-semibold">Timestamp</th>
-                  <th className="py-3.5 px-4 font-semibold">Source</th>
-                  <th className="py-3.5 px-4 font-semibold">File / Label</th>
-                  <th className="py-3.5 px-4 font-semibold">Verdict</th>
-                  <th className="py-3.5 px-4 font-semibold">Risk Score</th>
-                  <th className="py-3.5 px-4 font-semibold">Confidence</th>
-                  <th className="py-3.5 px-4 font-semibold">Duration</th>
-                  <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
+                  <th className="py-3.5 px-4 font-bold">Timestamp</th>
+                  <th className="py-3.5 px-4 font-bold">Source</th>
+                  <th className="py-3.5 px-4 font-bold">File / Label</th>
+                  <th className="py-3.5 px-4 font-bold">Verdict</th>
+                  <th className="py-3.5 px-4 font-bold">Risk Score</th>
+                  <th className="py-3.5 px-4 font-bold">Confidence</th>
+                  <th className="py-3.5 px-4 font-bold">Duration</th>
+                  <th className="py-3.5 px-4 font-bold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 font-mono">
+              <tbody className="divide-y divide-[#E3DCF0] font-mono bg-[#FBF7F4]">
                 {filteredHistory.map((item) => (
                   <tr
                     key={item.id}
                     onClick={() => handleInspect(item)}
-                    className="hover:bg-slate-800/40 cursor-pointer transition-colors group"
+                    className="hover:bg-[#EAF6F2] cursor-pointer transition-colors group"
                   >
-                    <td className="py-3.5 px-4 text-slate-300 whitespace-nowrap">
+                    <td className="py-3.5 px-4 text-[#7A7390] whitespace-nowrap">
                       {new Date(item.timestamp).toLocaleString()}
                     </td>
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[11px] ${
+                        className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded text-[11px] font-bold ${
                           item.source_type === "live"
-                            ? "bg-indigo-500/15 text-indigo-300 border border-indigo-500/30"
-                            : "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30"
+                            ? "bg-[#B8A6E8]/30 text-[#3A3450] border border-[#B8A6E8]"
+                            : "bg-[#A7D8D0]/40 text-[#3A3450] border border-[#A7D8D0]"
                         }`}
                       >
                         {item.source_type === "live" ? (
@@ -412,17 +356,17 @@ export default function HistoryPage() {
                         <span className="capitalize">{item.source_type}</span>
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-white font-semibold font-sans truncate max-w-[200px]">
+                    <td className="py-3.5 px-4 text-[#3A3450] font-bold font-sans truncate max-w-[200px]">
                       {item.filename_or_label}
                     </td>
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       {item.verdict === "synthetic" ? (
-                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-[#FCE4E4] text-[#D6395B] border border-[#D6395B]">
                           <AlertTriangle className="w-3 h-3" />
                           <span>SYNTHETIC</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-[#DFF5E6] text-[#2E9E5B] border border-[#2E9E5B]">
                           <CheckCircle2 className="w-3 h-3" />
                           <span>GENUINE</span>
                         </span>
@@ -431,10 +375,10 @@ export default function HistoryPage() {
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       {getRiskBadge(item.risk_score)}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-300 whitespace-nowrap">
+                    <td className="py-3.5 px-4 text-[#3A3450] whitespace-nowrap font-bold">
                       {(item.confidence * 100).toFixed(0)}%
                     </td>
-                    <td className="py-3.5 px-4 text-slate-400 whitespace-nowrap">
+                    <td className="py-3.5 px-4 text-[#7A7390] whitespace-nowrap">
                       {item.audio_duration_sec.toFixed(1)}s
                     </td>
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
@@ -444,7 +388,7 @@ export default function HistoryPage() {
                             e.stopPropagation();
                             handleOpenDossier(item.id);
                           }}
-                          className="p-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/30 text-cyan-300 transition-colors"
+                          className="p-1.5 rounded-lg bg-[#EAF6F2] hover:bg-[#d6eee6] text-[#3A3450] border border-[#E3DCF0] transition-colors"
                           title="Generate Court-Admissible Legal Dossier"
                         >
                           <Scale className="w-4 h-4" />
@@ -454,14 +398,14 @@ export default function HistoryPage() {
                             e.stopPropagation();
                             handleInspect(item);
                           }}
-                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-cyan-300 transition-colors"
+                          className="p-1.5 rounded-lg bg-[#F3EEFB] hover:bg-[#E3DCF0] text-[#3A3450] border border-[#E3DCF0] transition-colors"
                           title="Inspect Forensics"
                         >
                           <ChevronRight className="w-4 h-4" />
                         </button>
                         <button
                           onClick={(e) => handleDelete(item.id, e)}
-                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-900/40 text-slate-400 hover:text-rose-300 transition-colors"
+                          className="p-1.5 rounded-lg bg-[#FCE4E4] hover:bg-[#F9D2D2] text-[#D6395B] border border-[#D6395B] transition-colors"
                           title="Delete Record"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -478,33 +422,33 @@ export default function HistoryPage() {
 
       {/* Detailed Inspection Modal */}
       {selectedScan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-          <div className="glass-panel border border-slate-700 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#F3EEFB] border border-[#E3DCF0] rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl">
             {/* Modal Header */}
-            <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+            <div className="flex items-start justify-between border-b border-[#E3DCF0] pb-4">
               <div>
                 <div className="flex items-center space-x-2">
                   <span
-                    className={`text-xs font-mono font-bold uppercase px-2 py-0.5 rounded ${
+                    className={`text-xs font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-full ${
                       selectedScan.verdict === "synthetic"
-                        ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                        : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                        ? "bg-[#FCE4E4] text-[#D6395B] border border-[#D6395B]"
+                        : "bg-[#DFF5E6] text-[#2E9E5B] border border-[#2E9E5B]"
                     }`}
                   >
                     {selectedScan.verdict === "synthetic" ? "CRITICAL THREAT" : "AUTHENTIC HUMAN"}
                   </span>
-                  <span className="text-xs font-mono text-slate-400">
+                  <span className="text-xs font-mono text-[#7A7390]">
                     {new Date(selectedScan.timestamp).toLocaleString()}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-white mt-1">
+                <h3 className="text-xl font-bold text-[#3A3450] mt-1">
                   {selectedScan.filename_or_label}
                 </h3>
               </div>
 
               <button
                 onClick={() => setSelectedScan(null)}
-                className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+                className="p-2 rounded-xl bg-[#FBF7F4] hover:bg-[#EAF6F2] text-[#7A7390] hover:text-[#3A3450] transition-colors border border-[#E3DCF0]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -512,117 +456,58 @@ export default function HistoryPage() {
 
             {/* Score & Verdict Banner */}
             <div
-              className={`p-4 rounded-xl border ${
+              className={`p-5 rounded-2xl border-2 ${
                 selectedScan.verdict === "synthetic"
-                  ? "bg-rose-500/10 border-rose-500/30 text-rose-200"
-                  : "bg-emerald-500/10 border-emerald-500/30 text-emerald-200"
+                  ? "bg-[#FCE4E4] border-[#D6395B] text-[#3A3450]"
+                  : "bg-[#DFF5E6] border-[#2E9E5B] text-[#3A3450]"
               }`}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-xs uppercase font-mono tracking-wider opacity-80">
+                  <div className="text-xs uppercase font-mono tracking-wider font-semibold text-[#7A7390]">
                     Overall Risk Rating
                   </div>
-                  <div className="text-2xl font-extrabold font-mono mt-0.5">
+                  <div
+                    className={`text-3xl font-black font-mono mt-0.5 ${
+                      selectedScan.verdict === "synthetic" ? "text-[#D6395B]" : "text-[#2E9E5B]"
+                    }`}
+                  >
                     {selectedScan.risk_score.toFixed(1)}%{" "}
-                    <span className="text-xs font-normal opacity-80">
+                    <span className="text-xs font-normal text-[#7A7390]">
                       ({(selectedScan.confidence * 100).toFixed(0)}% Confidence)
                     </span>
                   </div>
                 </div>
-                <div className="text-right text-xs font-mono opacity-80">
+                <div className="text-right text-xs font-mono text-[#7A7390]">
                   Duration: {selectedScan.audio_duration_sec.toFixed(2)}s <br />
                   Source: {selectedScan.source_type}
                 </div>
               </div>
-              <p className="text-xs mt-3 pt-3 border-t border-current/20 leading-relaxed">
+              <p className="text-xs mt-3 pt-3 border-t border-[#E3DCF0] leading-relaxed font-medium">
                 {selectedScan.reason}
               </p>
             </div>
 
             {/* Mitigation Policy */}
-            <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1 font-mono text-xs text-slate-300">
-              <span className="text-slate-400 uppercase font-semibold">Recommended Mitigation Policy:</span>
-              <p className="pt-1">{selectedScan.recommended_action}</p>
+            <div className="p-4 rounded-2xl bg-[#EAF6F2] border border-[#E3DCF0] space-y-1 font-mono text-xs text-[#3A3450]">
+              <span className="text-[#7A7390] uppercase font-bold">Recommended Mitigation Policy:</span>
+              <p className="pt-1 font-semibold">{selectedScan.recommended_action}</p>
             </div>
 
-            {/* Acoustic Features Breakdown (if available) */}
-            {selectedScan.acoustic_features && (
-              <div className="space-y-2">
-                <h4 className="text-xs font-mono text-slate-400 uppercase">
-                  Acoustic Forensics Signature
-                </h4>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
-                    <span className="text-[10px] text-slate-400">Pitch Dynamics ($F_0$)</span>
-                    <div className="text-sm font-bold font-mono text-white mt-0.5">
-                      {selectedScan.acoustic_features.pitch_std_hz?.toFixed(1) ?? "--"} Hz
-                    </div>
-                  </div>
-                  <div className="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
-                    <span className="text-[10px] text-slate-400">Spectral Flatness</span>
-                    <div className="text-sm font-bold font-mono text-cyan-300 mt-0.5">
-                      {selectedScan.acoustic_features.spectral_flatness?.toFixed(4) ?? "--"}
-                    </div>
-                  </div>
-                  <div className="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
-                    <span className="text-[10px] text-slate-400">Centroid Frequency</span>
-                    <div className="text-sm font-bold font-mono text-teal-300 mt-0.5">
-                      {selectedScan.acoustic_features.spectral_centroid_hz?.toFixed(0) ?? "--"} Hz
-                    </div>
-                  </div>
-                  <div className="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
-                    <span className="text-[10px] text-slate-400">Vocoder Anomaly</span>
-                    <div className="text-sm font-bold font-mono text-rose-300 mt-0.5">
-                      {selectedScan.acoustic_features.neural_vocoder_artifact_score?.toFixed(1) ?? "--"}/100
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Chunks List */}
-            {selectedScan.chunk_scores && selectedScan.chunk_scores.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="text-xs font-mono text-slate-400 uppercase">
-                  Sliding Chunk Timeline Analysis ({selectedScan.chunk_scores.length} windows)
-                </h4>
-                <div className="max-h-40 overflow-y-auto rounded-lg border border-slate-800 divide-y divide-slate-800/80 text-xs font-mono bg-slate-950/60">
-                  {selectedScan.chunk_scores.map((chunk, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2.5 px-3">
-                      <span className="text-slate-400">
-                        Chunk #{chunk.chunk_index}: {chunk.start_sec.toFixed(1)}s - {chunk.end_sec.toFixed(1)}s
-                      </span>
-                      <div className="flex items-center space-x-3">
-                        <span
-                          className={`text-[11px] font-bold ${
-                            chunk.label === "synthetic" ? "text-rose-400" : "text-emerald-400"
-                          }`}
-                        >
-                          {chunk.label.toUpperCase()}
-                        </span>
-                        <span className="text-slate-300">{chunk.risk_score.toFixed(1)}% Risk</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Modal Footer */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-800 text-xs font-mono text-slate-400">
+            <div className="flex items-center justify-between pt-4 border-t border-[#E3DCF0] text-xs font-mono text-[#7A7390]">
               <span className="truncate max-w-xs">UUID: {selectedScan.test_id}</span>
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => handleOpenDossier(selectedScan.test_id)}
-                  className="px-3 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 flex items-center space-x-1.5 transition-colors font-semibold"
+                  className="px-3.5 py-2 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold flex items-center space-x-1.5 transition-colors shadow-sm"
                 >
                   <Scale className="w-3.5 h-3.5" />
                   <span>Generate Court Dossier (Sec 65B)</span>
                 </button>
                 <button
                   onClick={() => setSelectedScan(null)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold transition-colors"
+                  className="px-4 py-2 rounded-xl bg-[#FBF7F4] hover:bg-[#EAF6F2] text-[#3A3450] font-semibold border border-[#E3DCF0] transition-colors"
                 >
                   Close Inspector
                 </button>
@@ -634,53 +519,53 @@ export default function HistoryPage() {
 
       {/* Court-Admissible Legal Case Dossier Modal */}
       {dossierData && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
-          <div className="glass-panel border border-cyan-500/50 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl bg-[#080c14]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#FBF7F4] border border-[#E3DCF0] rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl">
             {/* Dossier Header */}
-            <div className="border-b border-slate-800 pb-4 flex items-start justify-between">
+            <div className="border-b border-[#E3DCF0] pb-4 flex items-start justify-between">
               <div>
-                <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-mono text-cyan-300">
-                  <Scale className="w-3 h-3 text-cyan-400" />
+                <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded bg-[#B8A6E8]/30 border border-[#B8A6E8] text-[10px] font-mono text-[#3A3450] font-bold">
+                  <Scale className="w-3 h-3 text-[#3A3450]" />
                   <span>COURT-ADMISSIBLE FORENSIC EVIDENCE DOSSIER</span>
                 </div>
-                <h3 className="text-xl font-bold text-white mt-1">
+                <h3 className="text-xl font-bold text-[#3A3450] mt-1">
                   Electronic Evidence Certificate (Section 65B)
                 </h3>
-                <p className="text-xs text-slate-400 font-mono">
+                <p className="text-xs text-[#7A7390] font-mono">
                   {dossierData.court_admissibility_standard}
                 </p>
               </div>
 
               <button
                 onClick={() => setDossierData(null)}
-                className="text-slate-400 hover:text-white text-sm"
+                className="text-[#7A7390] hover:text-[#3A3450] text-sm font-bold"
               >
                 ✕
               </button>
             </div>
 
             {/* Legal Body */}
-            <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-4 font-mono text-xs text-slate-300">
-              <div className="flex justify-between border-b border-slate-800/80 pb-2">
-                <span className="text-slate-500">Official Case Reference ID:</span>
-                <span className="text-cyan-300 font-bold">{dossierData.case_reference}</span>
+            <div className="p-5 rounded-2xl bg-[#F3EEFB] border border-[#E3DCF0] space-y-4 font-mono text-xs text-[#3A3450]">
+              <div className="flex justify-between border-b border-[#E3DCF0] pb-2">
+                <span className="text-[#7A7390]">Official Case Reference ID:</span>
+                <span className="text-[#7c63c7] font-bold">{dossierData.case_reference}</span>
               </div>
 
-              <div className="flex justify-between border-b border-slate-800/80 pb-2">
-                <span className="text-slate-500">Incident Timestamp (UTC):</span>
-                <span className="text-white">{dossierData.timestamp}</span>
+              <div className="flex justify-between border-b border-[#E3DCF0] pb-2">
+                <span className="text-[#7A7390]">Incident Timestamp (UTC):</span>
+                <span className="text-[#3A3450] font-semibold">{dossierData.timestamp}</span>
               </div>
 
-              <div className="flex justify-between border-b border-slate-800/80 pb-2">
-                <span className="text-slate-500">Audio Ingestion Channel:</span>
-                <span className="text-white">{dossierData.target_channel}</span>
+              <div className="flex justify-between border-b border-[#E3DCF0] pb-2">
+                <span className="text-[#7A7390]">Audio Ingestion Channel:</span>
+                <span className="text-[#3A3450] font-semibold">{dossierData.target_channel}</span>
               </div>
 
-              <div className="flex justify-between border-b border-slate-800/80 pb-2">
-                <span className="text-slate-500">Forensic Liveness Classification:</span>
+              <div className="flex justify-between border-b border-[#E3DCF0] pb-2">
+                <span className="text-[#7A7390]">Forensic Liveness Classification:</span>
                 <span
                   className={`font-bold ${
-                    dossierData.verdict === "synthetic" ? "text-rose-400" : "text-emerald-400"
+                    dossierData.verdict === "synthetic" ? "text-[#D6395B]" : "text-[#2E9E5B]"
                   }`}
                 >
                   {dossierData.verdict.toUpperCase()} (Risk Score: {dossierData.risk_score.toFixed(1)}%)
@@ -689,41 +574,41 @@ export default function HistoryPage() {
 
               {/* Statutory Citation */}
               <div className="space-y-1 pt-1">
-                <span className="text-slate-500">Statutory Penal Violation Citation:</span>
-                <p className="p-2.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-200 text-[11px] leading-relaxed">
+                <span className="text-[#7A7390]">Statutory Penal Violation Citation:</span>
+                <p className="p-3 rounded-xl bg-[#FCE4E4] border border-[#D6395B] text-[#D6395B] text-[11px] leading-relaxed font-semibold">
                   {dossierData.statutory_citation}
                 </p>
               </div>
 
               {/* SHA-256 Checksum */}
               <div className="space-y-1 pt-1">
-                <span className="text-slate-500">Cryptographic Chain-of-Custody SHA-256:</span>
-                <div className="p-2 rounded bg-slate-900 border border-slate-800 text-[11px] text-cyan-300 select-all break-all">
+                <span className="text-[#7A7390]">Cryptographic Chain-of-Custody SHA-256:</span>
+                <div className="p-2.5 rounded-xl bg-[#FBF7F4] border border-[#E3DCF0] text-[11px] text-[#7c63c7] select-all break-all font-bold">
                   {dossierData.evidence_sha256}
                 </div>
               </div>
 
               {/* Scientific Findings */}
               <div className="space-y-1 pt-1">
-                <span className="text-slate-500">Forensic Scientific Finding:</span>
-                <p className="text-slate-300 text-[11px] leading-relaxed">
+                <span className="text-[#7A7390]">Forensic Scientific Finding:</span>
+                <p className="text-[#3A3450] text-[11px] leading-relaxed">
                   {dossierData.forensic_scientific_analysis}
                 </p>
               </div>
 
               {/* Chain of Custody Table */}
               <div className="space-y-2 pt-2">
-                <span className="text-slate-400 font-bold uppercase text-[10px]">
+                <span className="text-[#3A3450] font-bold uppercase text-[10px]">
                   Immutable Chain-of-Custody Audit Trail
                 </span>
                 <div className="space-y-1.5">
                   {dossierData.chain_of_custody.map((c, idx) => (
-                    <div key={idx} className="p-2 rounded bg-slate-900 border border-slate-800/80 text-[11px]">
-                      <div className="flex justify-between text-cyan-300 font-semibold">
+                    <div key={idx} className="p-2.5 rounded-xl bg-[#FBF7F4] border border-[#E3DCF0] text-[11px]">
+                      <div className="flex justify-between text-[#7c63c7] font-semibold">
                         <span>{c.step}</span>
-                        <span className="text-slate-400 font-normal">{c.actor}</span>
+                        <span className="text-[#7A7390] font-normal">{c.actor}</span>
                       </div>
-                      <p className="text-slate-400 mt-0.5">{c.details}</p>
+                      <p className="text-[#7A7390] mt-0.5">{c.details}</p>
                     </div>
                   ))}
                 </div>
@@ -732,14 +617,14 @@ export default function HistoryPage() {
 
             {/* Dossier Footer / Print Action */}
             <div className="flex items-center justify-between pt-2">
-              <span className="text-[11px] font-mono text-slate-500">
+              <span className="text-[11px] font-mono text-[#7A7390]">
                 VoiceGuard AI Autonomous Forensic Core
               </span>
 
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => window.print()}
-                  className="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-semibold flex items-center space-x-1.5 transition-colors"
+                  className="px-4 py-2 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-sm"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>Print Formal Case Dossier</span>
@@ -747,7 +632,7 @@ export default function HistoryPage() {
 
                 <button
                   onClick={() => setDossierData(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-colors"
+                  className="px-4 py-2 rounded-xl bg-[#EAF6F2] hover:bg-[#d6eee6] text-[#3A3450] text-xs font-semibold border border-[#E3DCF0] transition-colors"
                 >
                   Close
                 </button>

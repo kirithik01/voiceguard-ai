@@ -29,7 +29,7 @@ import {
 import { runTelecomBenchmark } from "@/lib/api";
 import { CodecBenchmarkResult } from "@/lib/types";
 
-const CODEC_COLORS = ["#06b6d4", "#3b82f6", "#f59e0b", "#f43f5e"];
+const CODEC_COLORS = ["#8E79C9", "#A7D8D0", "#C98A1F", "#D6395B"];
 
 export default function BenchmarkPage() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -57,67 +57,63 @@ export default function BenchmarkPage() {
   return (
     <div className="space-y-8 animate-fadeIn max-w-6xl mx-auto pb-16">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCF0] pb-6">
         <div>
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-300 mb-2">
-            <Cpu className="w-3.5 h-3.5 text-cyan-400" />
-            <span>TELECOM CODEC DEGRADATION & ACOUSTIC STRESS BENCHMARK</span>
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B8A6E8]/30 border border-[#B8A6E8] text-xs font-mono text-[#3A3450] font-semibold mb-2">
+            <Cpu className="w-3.5 h-3.5 text-[#3A3450]" />
+            <span>TELECOM CHANNEL ROBUSTNESS SUITE</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Codec Robustness Benchmark Lab
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3A3450] tracking-tight">
+            Codec Stress Test & Channel Robustness Benchmark
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Empirically stress-tests VoiceGuard against real-world telephone degradation: PSTN G.711 &mu;-law (8kHz), Wideband VoIP (Opus), and lossy mobile cellular packet dropouts.
+          <p className="text-sm text-[#7A7390] mt-1">
+            Simulates G.711 $\mu$-law, Opus VoIP, and lossy cellular channels to verify zero-verdict-flip forensic stability.
           </p>
         </div>
       </div>
 
-      {/* Control Panel: 1-Click Codec Stress Presets */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-        <h2 className="text-xs font-bold text-white uppercase font-mono tracking-wider flex items-center space-x-2">
-          <Zap className="w-4 h-4 text-cyan-400" />
-          <span>Select Test Audio for Telecom Stress Evaluation</span>
-        </h2>
+      {/* Select Voice Target & Run Benchmark */}
+      <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-4 shadow-sm">
+        <h3 className="text-sm font-bold text-[#3A3450] flex items-center space-x-2">
+          <Zap className="w-4 h-4 text-[#C98A1F]" />
+          <span>Select Voice Sample to Subject to Codec Simulation</span>
+        </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
-            onClick={() => handleRunBenchmark("ceo_clone_wire_fraud")}
-            disabled={loading}
-            className={`p-4 rounded-xl border text-left transition-all ${
+            onClick={() => setSelectedSample("ceo_clone_wire_fraud")}
+            className={`p-5 rounded-2xl border text-left transition-all shadow-xs ${
               selectedSample === "ceo_clone_wire_fraud"
-                ? "glass-panel-danger border-rose-500/60 shadow-md shadow-rose-500/10"
-                : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
+                ? "bg-[#FCE4E4] border-[#D6395B]"
+                : "bg-[#FBF7F4] border-[#E3DCF0] hover:border-[#B8A6E8]"
             }`}
           >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                AI CLONE VECTOR
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-[#D6395B]">Synthetic AI Clone Sample</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FCE4E4] text-[#D6395B] border border-[#D6395B] font-extrabold">
+                CEO Wire Fraud
               </span>
-              <Activity className="w-4 h-4 text-rose-400" />
             </div>
-            <h4 className="text-xs font-bold text-white">CEO Wire Fraud AI Voice Clone</h4>
-            <p className="text-[11px] text-slate-400 mt-1">
-              Tests whether neural vocoder flatlines remain detectable when downsampled to 8kHz telephone audio.
+            <p className="text-[11px] text-[#7A7390] mt-1">
+              Tests whether vocoder artifact markers survive lossy 8kHz G.711 downsampling and telephony compression.
             </p>
           </button>
 
           <button
-            onClick={() => handleRunBenchmark("human_executive_auth")}
-            disabled={loading}
-            className={`p-4 rounded-xl border text-left transition-all ${
+            onClick={() => setSelectedSample("human_executive_auth")}
+            className={`p-5 rounded-2xl border text-left transition-all shadow-xs ${
               selectedSample === "human_executive_auth"
-                ? "glass-panel-safe border-emerald-500/60 shadow-md shadow-emerald-500/10"
-                : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
+                ? "bg-[#DFF5E6] border-[#2E9E5B]"
+                : "bg-[#FBF7F4] border-[#E3DCF0] hover:border-[#B8A6E8]"
             }`}
           >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                GENUINE HUMAN
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-[#2E9E5B]">Authentic Human Sample</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#DFF5E6] text-[#2E9E5B] border border-[#2E9E5B] font-extrabold">
+                Rajesh Verma
               </span>
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
             </div>
-            <h4 className="text-xs font-bold text-white">Authentic Executive Human Speech</h4>
-            <p className="text-[11px] text-slate-400 mt-1">
+            <p className="text-[11px] text-[#7A7390] mt-1">
               Tests whether natural human pitch variation survives lossy G.711 compression without false positives.
             </p>
           </button>
@@ -126,16 +122,16 @@ export default function BenchmarkPage() {
         <button
           onClick={() => handleRunBenchmark(selectedSample)}
           disabled={loading}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+          className="w-full py-3 rounded-xl bg-[#B8A6E8] hover:bg-[#A792E0] text-[#3A3450] font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
         >
           {loading ? (
             <>
-              <Activity className="w-4 h-4 animate-spin text-slate-950" />
+              <Activity className="w-4 h-4 animate-spin text-[#3A3450]" />
               <span>Simulating Telecom Codecs & Computing Forensic Matrix...</span>
             </>
           ) : (
             <>
-              <Cpu className="w-4 h-4 text-slate-950" />
+              <Cpu className="w-4 h-4 text-[#3A3450]" />
               <span>Execute 4-Channel Codec Robustness Benchmark</span>
             </>
           )}
@@ -146,37 +142,37 @@ export default function BenchmarkPage() {
       {benchmarkResult && (
         <div className="space-y-6 animate-fadeIn">
           {/* Summary KPI Banner */}
-          <div className="glass-panel rounded-2xl p-6 border border-cyan-500/50 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+          <div className="rounded-3xl p-6 sm:p-7 bg-[#DFF5E6] border-2 border-[#2E9E5B] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md">
             <div className="space-y-1">
-              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-mono text-cyan-300">
-                <CheckCircle2 className="w-3 h-3 text-cyan-400" />
+              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-[#2E9E5B] text-white text-[10px] font-mono font-bold">
+                <CheckCircle2 className="w-3 h-3 text-white" />
                 <span>BENCHMARK CERTIFICATION COMPLETE</span>
               </div>
-              <h3 className="text-xl font-extrabold text-white">
+              <h3 className="text-xl font-black text-[#2E9E5B]">
                 Verdict Consistency: {benchmarkResult.benchmark_summary.overall_consistency_pct.toFixed(0)}%
               </h3>
-              <p className="text-xs text-slate-400 font-mono">
+              <p className="text-xs text-[#3A3450] font-mono font-medium">
                 Baseline Verdict:{" "}
-                <span className="text-cyan-300 font-bold">
+                <span className="font-bold">
                   {benchmarkResult.benchmark_summary.baseline_verdict.toUpperCase()}
                 </span>{" "}
                 across all telephone channels
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-center min-w-[180px]">
-              <span className="text-[10px] font-mono text-slate-400 uppercase">Resilience Rating</span>
-              <div className="text-xl font-extrabold font-mono text-emerald-400 mt-0.5">
+            <div className="p-4 rounded-2xl bg-white/90 border border-[#E3DCF0] text-center min-w-[180px] shadow-sm">
+              <span className="text-[10px] font-mono text-[#7A7390] uppercase font-semibold">Resilience Rating</span>
+              <div className="text-xl font-black font-mono text-[#2E9E5B] mt-0.5">
                 {benchmarkResult.benchmark_summary.robustness_rating}
               </div>
-              <span className="text-[10px] text-slate-500">Zero Verdict Flips</span>
+              <span className="text-[10px] text-[#7A7390] font-medium">Zero Verdict Flips</span>
             </div>
           </div>
 
           {/* Comparative Bar Chart */}
-          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-            <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-              <BarChart2 className="w-4 h-4 text-cyan-400" />
+          <div className="rounded-3xl bg-[#F3EEFB] p-6 border border-[#E3DCF0] space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#3A3450] flex items-center space-x-2">
+              <BarChart2 className="w-4 h-4 text-[#8E79C9]" />
               <span>Risk Score Stability Across Telecom Channels</span>
             </h3>
 
@@ -188,12 +184,12 @@ export default function BenchmarkPage() {
                 >
                   <XAxis
                     dataKey="profile_name"
-                    stroke="#64748b"
+                    stroke="#7A7390"
                     fontSize={11}
                     tickLine={false}
                   />
                   <YAxis
-                    stroke="#64748b"
+                    stroke="#7A7390"
                     fontSize={11}
                     tickLine={false}
                     domain={[0, 100]}
@@ -201,14 +197,15 @@ export default function BenchmarkPage() {
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#090d16",
-                      borderColor: "#334155",
-                      borderRadius: "8px",
+                      backgroundColor: "#F3EEFB",
+                      borderColor: "#E3DCF0",
+                      borderRadius: "12px",
                       fontSize: "11px",
+                      color: "#3A3450",
                     }}
                   />
-                  <ReferenceLine y={65} stroke="#f43f5e" strokeDasharray="3 3" label="High Risk" />
-                  <ReferenceLine y={35} stroke="#10b981" strokeDasharray="3 3" label="Safe" />
+                  <ReferenceLine y={65} stroke="#D6395B" strokeDasharray="3 3" label="High Risk" />
+                  <ReferenceLine y={35} stroke="#2E9E5B" strokeDasharray="3 3" label="Safe" />
                   <Bar dataKey="risk_score" radius={[6, 6, 0, 0]}>
                     {benchmarkResult.profiles.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={CODEC_COLORS[index % CODEC_COLORS.length]} />
@@ -224,17 +221,17 @@ export default function BenchmarkPage() {
             {benchmarkResult.profiles.map((p, idx) => (
               <div
                 key={p.profile_name}
-                className="p-5 rounded-2xl glass-panel border border-slate-800 space-y-3"
+                className="p-5 rounded-3xl bg-[#F3EEFB] border border-[#E3DCF0] space-y-3 shadow-sm"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-950 text-slate-300 border border-slate-800">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FBF7F4] text-[#3A3450] border border-[#E3DCF0]">
                     Profile {idx + 1}
                   </span>
                   <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                    className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full ${
                       p.verdict === "synthetic"
-                        ? "bg-rose-500/20 text-rose-400"
-                        : "bg-emerald-500/20 text-emerald-400"
+                        ? "bg-[#FCE4E4] text-[#D6395B] border border-[#D6395B]"
+                        : "bg-[#DFF5E6] text-[#2E9E5B] border border-[#2E9E5B]"
                     }`}
                   >
                     {p.verdict.toUpperCase()}
@@ -242,28 +239,28 @@ export default function BenchmarkPage() {
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold text-white">{p.profile_name}</h4>
-                  <div className="text-2xl font-extrabold font-mono mt-1" style={{ color: CODEC_COLORS[idx] }}>
+                  <h4 className="text-xs font-bold text-[#3A3450]">{p.profile_name}</h4>
+                  <div className="text-2xl font-black font-mono mt-1" style={{ color: CODEC_COLORS[idx] }}>
                     {p.risk_score.toFixed(1)}%
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800 space-y-1 text-[11px] font-mono text-slate-400">
+                <div className="pt-2 border-t border-[#E3DCF0] space-y-1 text-[11px] font-mono text-[#7A7390]">
                   <div className="flex justify-between">
                     <span>Confidence:</span>
-                    <span className="text-white font-bold">{(p.confidence * 100).toFixed(0)}%</span>
+                    <span className="text-[#3A3450] font-bold">{(p.confidence * 100).toFixed(0)}%</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Pitch Std:</span>
-                    <span className="text-white">{p.pitch_std_hz?.toFixed(1) ?? "--"} Hz</span>
+                    <span className="text-[#3A3450]">{p.pitch_std_hz?.toFixed(1) ?? "--"} Hz</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Wiener Flat:</span>
-                    <span className="text-white">{p.spectral_flatness?.toFixed(4) ?? "--"}</span>
+                    <span className="text-[#3A3450]">{p.spectral_flatness?.toFixed(4) ?? "--"}</span>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800 text-[10px] font-mono text-emerald-400 flex items-center space-x-1">
+                <div className="pt-2 border-t border-[#E3DCF0] text-[10px] font-mono text-[#2E9E5B] flex items-center space-x-1 font-bold">
                   <CheckCircle2 className="w-3 h-3 shrink-0" />
                   <span>{p.resilience_verdict}</span>
                 </div>
